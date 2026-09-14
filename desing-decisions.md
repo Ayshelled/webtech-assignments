@@ -28,3 +28,4 @@ The "accept exactly one applicant" rule (accepting one application rejects every
 - A **visit reschedule creates a new row** rather than editing the existing one in place, so the application keeps a full history of proposed and cancelled slots. The brief doesn't settle this either way.
 - **Removing a review** (a moderator power) is assumed to be a hard delete for now — there's no `deleted_at` or status column on `reviews` to keep a moderated-away review as a record. We may revisit this if a later assignment expects auditability.
 - **Deposit defaults to 0**, assuming it's optional rather than a mandatory charge.
+- **Location of the App**, in this proyect we've made the assumption that, even though it's in english, the app operates for user in Santiago de Chile. Hence, we've also assumed the app's currency is Chilean Pesos.
