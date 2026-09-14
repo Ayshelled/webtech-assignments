@@ -29,3 +29,4 @@ The "accept exactly one applicant" rule (accepting one application rejects every
 - **Removing a review** (a moderator power) is assumed to be a hard delete for now — there's no `deleted_at` or status column on `reviews` to keep a moderated-away review as a record. We may revisit this if a later assignment expects auditability.
 - **Deposit defaults to 0**, assuming it's optional rather than a mandatory charge.
 - **Location of the App**, in this proyect we've made the assumption that, even though it's in english, the app operates for user in Santiago de Chile. Hence, we've also assumed the app's currency is Chilean Pesos.
+- **For accessing the website**, it's assumed that the assignment does not need the use of GitHub Pages to host the website. It is assumed that to run the website, the user launches it on their own accord (for example, through live server).
