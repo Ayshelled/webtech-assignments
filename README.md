@@ -38,7 +38,7 @@ Semester project for **Web Technologies**, semester 202620.
 
 ## Domain model
 
-![alt text](image.png)
+![alt text](docs/images/image.png)
 
 **Online diagram:** https://dbdiagram.io/d/Diagram-model-Roomies-6aa8469e36f9982564907f49 
 
