@@ -31,7 +31,6 @@ Semester project for **Web Technologies**, semester 202620.
 ├── landing/
 │   ├── index.html            Static landing page
 │   ├── css/                  Custom stylesheets
-│   └── img/                  Images used by the example room cards
 └── README.md
 ```
 
