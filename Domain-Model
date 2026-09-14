@@ -1,0 +1,301 @@
+// =============================================================
+// ROOMIES — Domain Model
+// Web Technologies · Semester 202620 · Assignment 1
+// =============================================================
+
+
+// -------------------------------------------------------------
+// ENUMS
+// -------------------------------------------------------------
+
+Enum user_role {
+  member
+  moderator
+}
+
+Enum property_type {
+  apartment
+  house
+  studio
+  townhouse
+}
+
+Enum amenity_category {
+  amenity
+  shared_space
+}
+
+Enum listing_status {
+  draft
+  published
+  reserved
+  rented
+  withdrawn
+}
+
+Enum application_status {
+  pending
+  shortlisted
+  accepted
+  rejected
+  withdrawn
+}
+
+Enum visit_status {
+  proposed
+  confirmed
+  cancelled
+  completed
+}
+
+Enum report_reason {
+  fraudulent
+  misleading
+  offensive
+  other
+}
+
+Enum report_status {
+  pending
+  dismissed
+  actioned
+}
+
+
+// -------------------------------------------------------------
+// ENTITIES
+// -------------------------------------------------------------
+
+Table users {
+  id               bigint        [pk, increment]
+  email_address    varchar(255)  [not null, unique]
+  password_digest  varchar(255)  [not null]
+  full_name        varchar(120)  [not null]
+  phone            varchar(30)
+  role             user_role     [not null, default: 'member']
+  created_at       timestamp     [not null]
+  updated_at       timestamp     [not null]
+
+}
+
+
+Table neighborhoods {
+  id          bigint        [pk, increment]
+  name        varchar(100)  [not null]
+  city        varchar(100)  [not null]
+  created_at  timestamp     [not null]
+  updated_at  timestamp     [not null]
+
+  Indexes {
+    (name, city) [unique]
+  }
+}
+
+
+Table amenities {
+  id          bigint            [pk, increment]
+  name        varchar(60)       [not null, unique]
+  category    amenity_category  [not null, default: 'amenity']
+  created_at  timestamp         [not null]
+  updated_at  timestamp         [not null]
+
+}
+
+
+Table properties {
+  id               bigint         [pk, increment]
+  user_id          bigint         [not null]
+  neighborhood_id  bigint         [not null]
+  street_address   varchar(200)   [not null]
+  property_type    property_type  [not null]
+  bedrooms_count   integer        [not null, default: 1]
+  bathrooms_count  integer        [not null, default: 1]
+  created_at       timestamp      [not null]
+  updated_at       timestamp      [not null]
+}
+
+
+Table property_amenities {
+  id           bigint     [pk, increment]
+  property_id  bigint     [not null]
+  amenity_id   bigint     [not null]
+  created_at   timestamp  [not null]
+  updated_at   timestamp  [not null]
+
+  Indexes {
+    (property_id, amenity_id) [unique]
+  }
+}
+
+
+Table listings {
+  id                   bigint          [pk, increment]
+  property_id          bigint          [not null]
+  status               listing_status  [not null, default: 'draft']
+  monthly_rent         decimal(10,2)   [not null]
+  deposit              decimal(10,2)   [not null, default: 0]
+  available_from       date            [not null]
+  minimum_stay_months  integer         [not null, default: 1]
+  furnished            boolean         [not null, default: false]
+  private_bathroom     boolean         [not null, default: false]
+
+  description          text            [not null, note: 'Rich text managed with Action Text']
+  house_rules          text            [note: 'Rich text managed with Action Text']
+
+  created_at           timestamp       [not null]
+  updated_at           timestamp       [not null]
+
+}
+
+
+Table listing_photos {
+  id          bigint        [pk, increment]
+  listing_id  bigint        [not null]
+  caption     varchar(150)
+  alt_text    varchar(255)
+  position    integer       [not null, default: 0]
+  created_at  timestamp     [not null]
+  updated_at  timestamp     [not null]
+
+}
+
+
+Table applications {
+  id                    bigint              [pk, increment]
+  listing_id            bigint              [not null]
+  user_id               bigint              [not null, note: 'The seeker who submits the application']
+  message               text                [not null]
+  desired_move_in_date  date                [not null]
+  intended_stay_months  integer             [not null]
+  status                application_status  [not null, default: 'pending']
+  created_at            timestamp           [not null]
+  updated_at            timestamp           [not null]
+
+  Indexes {
+    (listing_id, user_id) [unique]
+  }
+
+}
+
+
+Table visits {
+  id              bigint        [pk, increment]
+  application_id  bigint        [not null]
+  scheduled_at    timestamp     [not null]
+  status          visit_status  [not null, default: 'proposed']
+  created_at      timestamp     [not null]
+  updated_at      timestamp     [not null]
+
+}
+
+
+Table reviews {
+  id          bigint     [pk, increment]
+  visit_id    bigint     [not null, unique]
+  rating      integer    [not null, check: `rating >= 1 AND rating <= 5`]
+  comment     text       [not null]
+  created_at  timestamp  [not null]
+  updated_at  timestamp  [not null]
+
+}
+
+
+Table saved_listings {
+  id          bigint     [pk, increment]
+  user_id     bigint     [not null]
+  listing_id  bigint     [not null]
+  created_at  timestamp  [not null]
+  updated_at  timestamp  [not null]
+
+  Indexes {
+    (user_id, listing_id) [unique]
+  }
+
+}
+
+
+Table reports {
+  id          bigint         [pk, increment]
+  listing_id  bigint         [not null]
+  user_id     bigint         [not null, note: 'The user who submits the report']
+  reason      report_reason  [not null]
+  details     text
+  status      report_status  [not null, default: 'pending']
+  created_at  timestamp      [not null]
+  updated_at  timestamp      [not null]
+
+  Indexes {
+    (listing_id, user_id) [unique]
+  }
+
+}
+
+
+// =============================================================
+// RELATIONSHIPS AND CARDINALITY
+//
+// >  many-to-one
+// -  one-to-one
+// =============================================================
+
+
+// User -> Properties
+Ref: properties.user_id > users.id
+// 1 user can own N properties
+
+
+// Neighborhood -> Properties
+Ref: properties.neighborhood_id > neighborhoods.id
+// 1 neighborhood can contain N properties
+
+
+// Properties <-> Amenities
+Ref: property_amenities.property_id > properties.id
+Ref: property_amenities.amenity_id > amenities.id
+// N properties can have N amenities
+
+
+// Property -> Listings
+Ref: listings.property_id > properties.id
+// 1 property can have N listings
+
+
+// Listing -> Photos
+Ref: listing_photos.listing_id > listings.id
+// 1 listing can have N photos
+
+
+// Listing -> Applications
+Ref: applications.listing_id > listings.id
+// 1 listing can receive N applications
+
+
+// User -> Applications
+Ref: applications.user_id > users.id
+// 1 seeker can submit N applications
+
+
+// Application -> Visits
+Ref: visits.application_id > applications.id
+// 1 application can have N visits due to rescheduling
+
+
+// Visit -> Review
+Ref: reviews.visit_id - visits.id
+// 1 visit can have at most 1 review
+
+
+// Users <-> Listings through Saved Listings
+Ref: saved_listings.user_id > users.id
+Ref: saved_listings.listing_id > listings.id
+// N users can save N listings
+
+
+// Listing -> Reports
+Ref: reports.listing_id > listings.id
+// 1 listing can receive N reports
+
+
+// User -> Reports
+Ref: reports.user_id > users.id
+// 1 user can submit N reports
