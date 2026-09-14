@@ -42,7 +42,7 @@ Semester project for **Web Technologies**, semester 202620.
 
 **Online diagram:** https://dbdiagram.io/d/Diagram-model-Roomies-6aa8469e36f9982564907f49 
 
-The source is in [`docs/domain-model.dbml`](docs/domain-model.dbml) and can be
+The source is in [`docs/domain-model.dbml`](docs/Domain-Model.dbml) and can be
 re-rendered at any time by pasting its contents into
 [dbdiagram.io](https://dbdiagram.io).
 
