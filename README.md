@@ -11,8 +11,8 @@ Semester project for **Web Technologies**, semester 202620.
 
 ## Team
 
-| Name | GitHub |
-| --- | --- |
+| Name |
+| --- |
 | Javiera Carrasco Bastías|
 | Andres Concha Arriaga|
 | Rodrigo Ruz Vasquez|
