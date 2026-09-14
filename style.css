@@ -1,0 +1,43 @@
+:root {
+    --ink: #243447;
+    --muted: #64748b;
+    --blue: #e9f2fb;
+    --accent: #2563a6;
+    --line: #d9e1e8;
+}
+
+body { color: var(--ink); background: #fff; font-family: Arial, sans-serif; }
+h1, h2, h3, .navbar-brand { font-weight: 600; }
+.navbar { background: #fff; }
+.navbar-brand { color: var(--ink); font-size: 1.35rem; }
+.brand-dot { color: var(--accent); }
+.nav-link { color: var(--muted); font-size: .94rem; }
+.nav-link:hover, .nav-link:focus { color: var(--accent); }
+.btn-coral { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-coral:hover, .btn-coral:focus { background: #1d4f82; border-color: #1d4f82; color: #fff; }
+.hero { padding: 4rem 0; background: var(--blue); }
+.hero h1 { max-width: 650px; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.05; }
+.hero-copy { max-width: 510px; color: var(--muted); font-size: 1.05rem; }
+.hero-art { min-height: 260px; }
+.hero-photo { width: 100%; height: 260px; object-fit: cover; border-radius: 6px; }
+.section-label { color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.search-wrap { margin-top: 2rem; }
+.search-panel { border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.form-label { color: var(--muted); font-size: .8rem; font-weight: 700; }
+.form-control, .form-select { border-color: var(--line); border-radius: 4px; color: var(--ink); padding: .7rem .8rem; }
+.form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 .2rem rgba(37, 99, 166, .15); }
+.listing-section { padding: 4.5rem 0; }
+.listing-card { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #fff; }
+.listing-card img { height: 220px; object-fit: cover; }
+.listing-card .card-body { padding: 1.25rem; }
+.listing-card h3 { font-size: 1.25rem; }
+.listing-meta { color: var(--muted); font-size: .9rem; }
+.price { color: var(--ink); font-size: 1.2rem; font-weight: 700; }
+.how-section { padding: 4rem 0; background: #f8fafc; }
+.step-number { display: inline-grid; width: 38px; height: 38px; place-items: center; margin-bottom: 1rem; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; }
+footer { background: var(--ink); color: #dbe7df; }
+@media (max-width: 767.98px) {
+    .hero { padding: 3rem 0; }
+    .hero-art { min-height: 220px; margin-top: 1rem; }
+    .hero-photo { height: 220px; }
+}
