@@ -1,24 +1,59 @@
-# README
+# Roomies — Rails application
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails 8.1 · PostgreSQL · Bootstrap 5 (through `cssbundling-rails`).
 
-Things you may want to cover:
+## Requirements
 
-* Ruby version
+- Ruby **3.4.5** (see `.ruby-version`; use rbenv, asdf, mise or RubyInstaller)
+- PostgreSQL 14 or newer, running locally
+- Node.js and Yarn (to build the Bootstrap stylesheet)
 
-* System dependencies
+> **Windows:** we recommend running the project inside WSL 2 (Ubuntu). `bin/dev` relies on `foreman`, which does not run reliably on native Windows.
 
-* Configuration
+## Setup
 
-* Database creation
+```bash
+cd roomies
+bundle install
+yarn install
+```
 
-* Database initialization
+### Database connection
 
-* How to run the test suite
+On macOS with Postgres.app or Homebrew, the default settings work as they are.
+If your PostgreSQL needs a host, user or password (Windows, WSL, most Linux installs), export these variables before running any `bin/rails` command:
 
-* Services (job queues, cache servers, search engines, etc.)
+```bash
+export DB_HOST=localhost
+export DB_USERNAME=postgres
+export DB_PASSWORD=your_password
+```
 
-* Deployment instructions
+### Create, migrate and seed the database
 
-* ...
+```bash
+bin/rails db:create
+bin/rails db:migrate
+bin/rails db:seed
+```
+
+To start over from an empty database at any time:
+
+```bash
+bin/rails db:reset   # drop, create, load schema and seed
+```
+
+## Run the application
+
+```bash
+bin/dev
+```
+
+`bin/dev` starts the Rails server and the Bootstrap/Sass watcher together (see `Procfile.dev`).
+Open <http://localhost:3000>.
+
+## Tests
+
+```bash
+bin/rails test
+```

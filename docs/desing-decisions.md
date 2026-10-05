@@ -30,3 +30,13 @@ The "accept exactly one applicant" rule (accepting one application rejects every
 - **Deposit defaults to 0**, assuming it's optional rather than a mandatory charge.
 - **Location of the App**, in this proyect we've made the assumption that, even though it's in english, the app operates for user in Santiago de Chile. Hence, we've also assumed the app's currency is Chilean Pesos.
 - **For accessing the website**, it's assumed that the assignment does not need the use of GitHub Pages to host the website. It is assumed that to run the website, the user launches it on their own accord (for example, through live server).
+
+## Changes since Assignment 1
+
+Writing the migrations for Assignment 2 led to a few changes in the model. The updated source is [`Domain-Model.dbml`](Domain-Model.dbml).
+
+- **`listing_photos.image_url` added** (`varchar(500)`, not null). In Assignment 1 a photo only had `caption`, `alt_text` and `position`, which left nothing to display. Each photo now points to an image URL, and the model also requires `alt_text`, as the accessibility requirements ask. Uploading files (Active Storage) is left for the assignment that introduces forms.
+- **No Action Text for `description` and `house_rules`.** The Assignment 1 diagram said both would be managed as rich text. Nothing is editable in this assignment, so they stay plain `text` columns. We can move them to Action Text once hosts can write them through a form.
+- **Database `CHECK` constraints added** beyond what the diagram showed: positive bedroom and bathroom counts, a positive rent, a non-negative deposit and photo position, a minimum stay and intended stay of at least one month, and a rating between 1 and 5. The same rules are also model validations, so the user gets a readable error message instead of a database exception.
+- **Rules that span tables are validations, not constraints**, as anticipated in Assignment 1: a seeker can't apply to their own listing or to a listing that isn't published, a review requires a completed visit, a visit must be scheduled after its application was created, and a listing's availability date can't be in the past.
+- **Running the site:** the landing page is no longer opened with Live Server. It is now the root route of the Rails application (see the README).

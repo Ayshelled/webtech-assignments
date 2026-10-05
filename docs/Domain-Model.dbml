@@ -1,6 +1,6 @@
 // =============================================================
 // ROOMIES — Domain Model
-// Web Technologies · Semester 202620 · Assignment 1
+// Web Technologies · Semester 202620 · Assignment 2 (updated)
 // =============================================================
 
 
@@ -139,8 +139,8 @@ Table listings {
   furnished            boolean         [not null, default: false]
   private_bathroom     boolean         [not null, default: false]
 
-  description          text            [not null, note: 'Rich text managed with Action Text']
-  house_rules          text            [note: 'Rich text managed with Action Text']
+  description          text            [not null]
+  house_rules          text
 
   created_at           timestamp       [not null]
   updated_at           timestamp       [not null]
@@ -151,6 +151,7 @@ Table listings {
 Table listing_photos {
   id          bigint        [pk, increment]
   listing_id  bigint        [not null]
+  image_url   varchar(500)  [not null]
   caption     varchar(150)
   alt_text    varchar(255)
   position    integer       [not null, default: 0]

@@ -18,6 +18,12 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # Optional, for machines where PostgreSQL needs a TCP connection or a password
+  # (Windows, most Linux installs). Leave them unset on macOS with Postgres.app/Homebrew.
+  host: <%= ENV["DB_HOST"] %>
+  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
 
 
 development:

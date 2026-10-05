@@ -7,3 +7,10 @@ db/schema.rb linguist-generated
 vendor/* linguist-vendored
 config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
+
+# Keep Unix line endings on scripts and code so the app runs the same on macOS, Linux and Windows
+* text=auto eol=lf
+bin/* text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
