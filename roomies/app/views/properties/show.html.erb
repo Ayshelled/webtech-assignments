@@ -1,0 +1,50 @@
+<% content_for :title, @property.street_address %>
+
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><%= link_to "Properties", properties_path %></li>
+        <li class="breadcrumb-item"><%= link_to @property.neighborhood.name, neighborhood_path(@property.neighborhood) %></li>
+        <li class="breadcrumb-item active" aria-current="page"><%= @property.street_address %></li>
+      </ol>
+    </nav>
+    <p class="section-label mb-2"><%= @property.property_type.humanize %> &middot; <%= @property.neighborhood.name %>, <%= @property.neighborhood.city %></p>
+    <h1 class="h2 mb-2"><%= @property.street_address %></h1>
+    <p class="text-secondary mb-0">
+      <%= pluralize(@property.bedrooms_count, "bedroom") %> &middot;
+      <%= pluralize(@property.bathrooms_count, "bathroom") %> &middot;
+      Hosted by <%= @property.user.full_name %>
+    </p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-8">
+      <section class="mb-5" aria-labelledby="listings-title">
+        <h2 id="listings-title" class="h4 mb-3">Rooms in this property</h2>
+        <% if @listings.any? %>
+          <div class="row g-4">
+            <%= render partial: "listings/listing", collection: @listings, as: :listing,
+                       locals: { col_class: "col-md-6", show_status: true } %>
+          </div>
+        <% else %>
+          <%= render "shared/empty_state", message: "This property has no listings yet.", icon: "door-closed" %>
+        <% end %>
+      </section>
+
+      <section aria-labelledby="reviews-title">
+        <h2 id="reviews-title" class="h4 mb-3">Reviews</h2>
+        <%= render "properties/reviews", reviews: @reviews %>
+      </section>
+    </div>
+
+    <aside class="col-lg-4">
+      <div class="detail-panel p-4">
+        <h2 class="h5 mb-3">Amenities and shared spaces</h2>
+        <%= render "properties/amenities", amenities: @amenities, shared_spaces: @shared_spaces %>
+      </div>
+    </aside>
+  </div>
+</div>

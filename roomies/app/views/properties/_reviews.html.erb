@@ -1,0 +1,23 @@
+<%# Reviews left by seekers after a completed visit. Locals: reviews %>
+<% reviews = reviews.to_a %>
+<% if reviews.empty? %>
+  <p class="text-secondary">No reviews yet. Reviews appear after a completed visit.</p>
+<% else %>
+  <p class="mb-3">
+    <%= rating_stars(average_rating(reviews).round) %>
+    <span class="fw-semibold ms-1"><%= average_rating(reviews) %></span>
+    <span class="text-secondary">&middot; <%= pluralize(reviews.size, "review") %></span>
+  </p>
+  <div class="d-flex flex-column gap-3">
+    <% reviews.each do |review| %>
+      <article class="detail-panel p-3">
+        <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+          <span class="fw-semibold"><%= review.visit.application.user.full_name %></span>
+          <span class="small text-secondary">Visited <%= short_date(review.visit.scheduled_at.to_date) %></span>
+        </div>
+        <%= rating_stars(review.rating) %>
+        <p class="mb-0 mt-2"><%= review.comment %></p>
+      </article>
+    <% end %>
+  </div>
+<% end %>

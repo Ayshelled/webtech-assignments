@@ -1,0 +1,48 @@
+<% content_for :title, @neighborhood.name %>
+
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><%= link_to "Neighborhoods", neighborhoods_path %></li>
+        <li class="breadcrumb-item active" aria-current="page"><%= @neighborhood.name %></li>
+      </ol>
+    </nav>
+    <p class="section-label mb-2"><%= @neighborhood.city %></p>
+    <h1 class="h2 mb-1"><%= @neighborhood.name %></h1>
+    <p class="text-secondary mb-0">
+      <%= pluralize(@listings.size, "room") %> open for applications in
+      <%= pluralize(@properties.size, "property") %>
+    </p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <section class="mb-5" aria-labelledby="rooms-title">
+    <h2 id="rooms-title" class="h4 mb-3">Available rooms</h2>
+    <% if @listings.any? %>
+      <div class="row g-4">
+        <%= render partial: "listings/listing", collection: @listings, as: :listing %>
+      </div>
+    <% else %>
+      <%= render "shared/empty_state", message: "No rooms are published in #{@neighborhood.name} right now.", icon: "door-closed" %>
+    <% end %>
+  </section>
+
+  <% if @properties.any? %>
+    <section aria-labelledby="properties-title">
+      <h2 id="properties-title" class="h4 mb-3">Properties in <%= @neighborhood.name %></h2>
+      <div class="list-group">
+        <% @properties.each do |property| %>
+          <%= link_to property_path(property), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2" do %>
+            <span>
+              <span class="fw-semibold"><%= property.street_address %></span>
+              <span class="text-secondary small d-block"><%= property.property_type.humanize %> &middot; <%= pluralize(property.bedrooms_count, "bedroom") %></span>
+            </span>
+            <span class="badge text-bg-light border"><%= pluralize(property.listings.size, "listing") %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

@@ -1,0 +1,36 @@
+<% content_for :title, "Neighborhoods" %>
+
+<section class="page-header">
+  <div class="container">
+    <p class="section-label mb-2">Neighborhoods</p>
+    <h1 class="h2 mb-1">Where do you want to live?</h1>
+    <p class="text-secondary mb-0">The neighborhoods hosts can choose from when they register a property.</p>
+  </div>
+</section>
+
+<section class="container py-5">
+  <% if @neighborhoods.any? %>
+    <div class="row g-4">
+      <% @neighborhoods.each do |neighborhood| %>
+        <article class="col-sm-6 col-lg-3">
+          <div class="detail-panel h-100 p-4 position-relative">
+            <p class="section-label mb-1"><%= neighborhood.city %></p>
+            <h2 class="h5 mb-3">
+              <%= link_to neighborhood.name, neighborhood_path(neighborhood), class: "stretched-link text-reset text-decoration-none" %>
+            </h2>
+            <p class="small mb-1">
+              <i class="bi bi-door-open me-1" aria-hidden="true"></i>
+              <%= pluralize(@published_counts.fetch(neighborhood.id, 0), "room") %> available
+            </p>
+            <p class="small text-secondary mb-0">
+              <i class="bi bi-building me-1" aria-hidden="true"></i>
+              <%= pluralize(@property_counts.fetch(neighborhood.id, 0), "property") %>
+            </p>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "No neighborhoods in the catalog yet.", icon: "map" %>
+  <% end %>
+</section>

@@ -1,0 +1,18 @@
+<%# Locals: amenities, shared_spaces (both arrays of Amenity) %>
+<% if amenities.empty? && shared_spaces.empty? %>
+  <p class="text-secondary">The host hasn't listed any amenities yet.</p>
+<% else %>
+  <div class="row g-3">
+    <% { "Amenities" => amenities, "Shared spaces" => shared_spaces }.each do |label, items| %>
+      <% next if items.empty? %>
+      <div class="col-sm-6">
+        <h3 class="h6 text-secondary text-uppercase small fw-bold"><%= label %></h3>
+        <ul class="list-unstyled mb-0">
+          <% items.each do |amenity| %>
+            <li class="mb-1"><i class="bi bi-check2 text-success me-1" aria-hidden="true"></i><%= amenity.name %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+<% end %>

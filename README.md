@@ -50,7 +50,7 @@ bin/dev            # http://localhost:3000
 
 ![alt text](docs/images/image.png)
 
-**Online diagram:** https://dbdiagram.io/d/Diagram-model-Roomies-6aa8469e36f9982564907f49 
+**Online diagram:** https://dbdiagram.io/d/6a9ef6fa28e65f9ec240359d 
 
 The source is in [`docs/domain-model.dbml`](docs/Domain-Model.dbml) and can be
 re-rendered at any time by pasting its contents into

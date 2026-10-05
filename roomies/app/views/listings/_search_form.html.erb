@@ -1,0 +1,41 @@
+<%# Search panel used on the home page and on the listings index.
+    It only reads: a GET request to /listings with the filters as query parameters.
+    Locals: neighborhoods, amenities (optional), filters (optional), heading (optional) %>
+<% filters = local_assigns.fetch(:filters, {}) %>
+<%= form_with url: listings_path, method: :get, local: true, class: "search-panel p-4 p-lg-5", role: "search" do |f| %>
+  <div class="row align-items-end g-3">
+    <% if local_assigns[:heading] %>
+      <div class="col-12 col-lg-3">
+        <h2 class="h4 mb-1"><%= heading %></h2>
+        <p class="mb-0 text-secondary small">Tell us what you're looking for.</p>
+      </div>
+    <% end %>
+    <div class="col-12 col-md-6 <%= local_assigns[:heading] ? "col-lg-3" : "col-lg" %>">
+      <%= f.label :neighborhood_id, "Neighborhood", class: "form-label" %>
+      <%= f.select :neighborhood_id,
+                   options_from_collection_for_select(neighborhoods, :id, :name, filters[:neighborhood_id]),
+                   { include_blank: "Any neighborhood" }, class: "form-select" %>
+    </div>
+    <div class="col-12 col-md-6 <%= local_assigns[:heading] ? "col-lg-2" : "col-lg" %>">
+      <%= f.label :max_rent, "Maximum rent", class: "form-label" %>
+      <%= f.select :max_rent,
+                   options_for_select(ListingsController::RENT_OPTIONS.map { |r| [ "#{clp(r)} / month", r ] }, filters[:max_rent]),
+                   { include_blank: "No limit" }, class: "form-select" %>
+    </div>
+    <div class="col-12 col-md-6 <%= local_assigns[:heading] ? "col-lg-2" : "col-lg" %>">
+      <%= f.label :available_by, "Move in by", class: "form-label" %>
+      <%= f.date_field :available_by, value: filters[:available_by], class: "form-control" %>
+    </div>
+    <% if local_assigns[:amenities] %>
+      <div class="col-12 col-md-6 col-lg">
+        <%= f.label :amenity_id, "Must have", class: "form-label" %>
+        <%= f.select :amenity_id,
+                     options_from_collection_for_select(amenities, :id, :name, filters[:amenity_id]),
+                     { include_blank: "Any amenity" }, class: "form-select" %>
+      </div>
+    <% end %>
+    <div class="col-12 <%= local_assigns[:heading] ? "col-lg-2" : "col-lg-auto" %>">
+      <%= f.submit "Search rooms", name: nil, class: "btn btn-coral w-100 py-2" %>
+    </div>
+  </div>
+<% end %>

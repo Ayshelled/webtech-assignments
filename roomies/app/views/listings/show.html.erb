@@ -1,0 +1,117 @@
+<% content_for :title, @listing.title %>
+<% photos = @listing.listing_photos.to_a %>
+
+<div class="container py-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+      <li class="breadcrumb-item"><%= link_to "Rooms", listings_path %></li>
+      <li class="breadcrumb-item"><%= link_to @property.neighborhood.name, neighborhood_path(@property.neighborhood) %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @listing.title %></li>
+    </ol>
+  </nav>
+
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+    <h1 class="h2 mb-0 me-2"><%= @listing.title %></h1>
+    <%= status_badge(@listing.status) %>
+  </div>
+  <p class="listing-meta mb-4">
+    <i class="bi bi-geo-alt" aria-hidden="true"></i>
+    <%= @property.street_address %>, <%= @property.neighborhood.name %>, <%= @property.neighborhood.city %>
+  </p>
+
+  <%# Photo gallery: the first photo large, the rest as a strip %>
+  <% if photos.any? %>
+    <div class="row g-2 mb-4 gallery">
+      <div class="<%= photos.size > 1 ? "col-lg-8" : "col-12" %>">
+        <figure class="mb-0">
+          <%= image_tag photos.first.image_url, alt: photos.first.alt_text, class: "gallery-main" %>
+          <% if photos.first.caption.present? %><figcaption class="small text-secondary mt-1"><%= photos.first.caption %></figcaption><% end %>
+        </figure>
+      </div>
+      <% if photos.size > 1 %>
+        <div class="col-lg-4 d-flex flex-column gap-2">
+          <% photos.drop(1).each do |photo| %>
+            <figure class="mb-0 flex-fill">
+              <%= image_tag photo.image_url, alt: photo.alt_text, class: "gallery-thumb", loading: "lazy" %>
+              <% if photo.caption.present? %><figcaption class="small text-secondary mt-1"><%= photo.caption %></figcaption><% end %>
+            </figure>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <section class="mb-4" aria-labelledby="about-title">
+        <h2 id="about-title" class="h4">About this room</h2>
+        <%= simple_format(@listing.description, class: "text-body") %>
+      </section>
+
+      <% if @listing.house_rules.present? %>
+        <section class="mb-4" aria-labelledby="rules-title">
+          <h2 id="rules-title" class="h4">House rules</h2>
+          <%= simple_format(@listing.house_rules, class: "text-body") %>
+        </section>
+      <% end %>
+
+      <section class="mb-4" aria-labelledby="property-title">
+        <h2 id="property-title" class="h4">The property</h2>
+        <div class="detail-panel p-3">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+              <p class="fw-semibold mb-1"><%= @property.property_type.humanize %> in <%= @property.neighborhood.name %></p>
+              <p class="listing-meta mb-0">
+                <%= pluralize(@property.bedrooms_count, "bedroom") %> &middot;
+                <%= pluralize(@property.bathrooms_count, "bathroom") %> &middot;
+                Hosted by <%= @property.user.full_name %>
+              </p>
+            </div>
+            <div><%= link_to "View property", property_path(@property), class: "btn btn-sm btn-outline-secondary" %></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-4" aria-labelledby="amenities-title">
+        <h2 id="amenities-title" class="h4">Amenities and shared spaces</h2>
+        <%= render "properties/amenities", amenities: @amenities, shared_spaces: @shared_spaces %>
+      </section>
+
+      <section class="mb-4" aria-labelledby="reviews-title">
+        <h2 id="reviews-title" class="h4">Reviews of this property</h2>
+        <%= render "properties/reviews", reviews: @reviews %>
+      </section>
+    </div>
+
+    <aside class="col-lg-4">
+      <div class="detail-panel price-panel p-4">
+        <p class="mb-0"><span class="price fs-3"><%= clp(@listing.monthly_rent) %></span> <span class="text-secondary">/ month</span></p>
+        <hr>
+        <dl class="row small mb-0">
+          <dt class="col-6 fw-normal text-secondary">Deposit</dt>
+          <dd class="col-6 text-end"><%= @listing.deposit.zero? ? "None" : clp(@listing.deposit) %></dd>
+          <dt class="col-6 fw-normal text-secondary">Available from</dt>
+          <dd class="col-6 text-end"><%= short_date(@listing.available_from) %></dd>
+          <dt class="col-6 fw-normal text-secondary">Minimum stay</dt>
+          <dd class="col-6 text-end"><%= pluralize(@listing.minimum_stay_months, "month") %></dd>
+          <dt class="col-6 fw-normal text-secondary">Furnished</dt>
+          <dd class="col-6 text-end"><%= @listing.furnished? ? "Yes" : "No" %></dd>
+          <dt class="col-6 fw-normal text-secondary">Private bathroom</dt>
+          <dd class="col-6 text-end mb-0"><%= @listing.private_bathroom? ? "Yes" : "No" %></dd>
+        </dl>
+        <hr>
+        <%# Applying needs an account, which arrives in a later assignment %>
+        <button type="button" class="btn btn-coral w-100" disabled>Log in to apply</button>
+      </div>
+    </aside>
+  </div>
+
+  <% if @other_listings.any? %>
+    <section class="mt-5" aria-labelledby="other-title">
+      <h2 id="other-title" class="h4 mb-3">Other rooms in this property</h2>
+      <div class="row g-4">
+        <%= render partial: "listings/listing", collection: @other_listings, as: :listing %>
+      </div>
+    </section>
+  <% end %>
+</div>

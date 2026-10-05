@@ -1,0 +1,36 @@
+<%# Listing card, reused everywhere a listing is displayed.
+    Locals: listing, col_class (optional grid column classes), show_status (optional) %>
+<% photo = listing.cover_photo %>
+<% neighborhood = listing.property.neighborhood %>
+<article class="<%= local_assigns.fetch(:col_class, "col-md-6 col-lg-4") %>">
+  <div class="listing-card h-100 position-relative">
+    <% if photo %>
+      <%= image_tag photo.image_url, alt: photo.alt_text, class: "card-img-top", loading: "lazy" %>
+    <% else %>
+      <div class="card-img-top photo-placeholder d-flex align-items-center justify-content-center" aria-hidden="true">
+        <i class="bi bi-house-door"></i>
+      </div>
+    <% end %>
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <h3 class="mb-2">
+          <%= link_to listing.title, listing_path(listing), class: "stretched-link text-reset text-decoration-none" %>
+        </h3>
+        <span class="price text-nowrap"><%= clp(listing.monthly_rent) %></span>
+      </div>
+      <p class="listing-meta mb-2">
+        <%= neighborhood.name %> &middot; <%= listing.property.property_type.humanize %> &middot;
+        Available <%= short_date(listing.available_from) %>
+      </p>
+      <p class="listing-meta small mb-0">
+        <i class="bi bi-geo-alt" aria-hidden="true"></i> <%= listing.property.street_address %>
+      </p>
+      <div class="d-flex flex-wrap gap-1 mt-3">
+        <% if local_assigns[:show_status] %><%= status_badge(listing.status) %><% end %>
+        <% if listing.furnished? %><span class="badge text-bg-light border">Furnished</span><% end %>
+        <% if listing.private_bathroom? %><span class="badge text-bg-light border">Private bathroom</span><% end %>
+        <span class="badge text-bg-light border">Min. <%= pluralize(listing.minimum_stay_months, "month") %></span>
+      </div>
+    </div>
+  </div>
+</article>

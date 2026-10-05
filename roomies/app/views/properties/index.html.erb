@@ -1,0 +1,38 @@
+<% content_for :title, "Properties" %>
+
+<section class="page-header">
+  <div class="container">
+    <p class="section-label mb-2">Properties</p>
+    <h1 class="h2 mb-1">Homes on Roomies</h1>
+    <p class="text-secondary mb-0">Every shared home whose rooms are published on Roomies.</p>
+  </div>
+</section>
+
+<section class="container py-5">
+  <% if @properties.any? %>
+    <div class="row g-4">
+      <% @properties.each do |property| %>
+        <% published = property.listings.to_a.count(&:published?) %>
+        <article class="col-md-6 col-lg-4">
+          <div class="detail-panel h-100 p-4 position-relative">
+            <p class="section-label mb-1"><%= property.neighborhood.name %></p>
+            <h2 class="h5 mb-2">
+              <%= link_to property.street_address, property_path(property), class: "stretched-link text-reset text-decoration-none" %>
+            </h2>
+            <p class="listing-meta mb-3">
+              <%= property.property_type.humanize %> &middot;
+              <%= pluralize(property.bedrooms_count, "bedroom") %> &middot;
+              <%= pluralize(property.bathrooms_count, "bathroom") %>
+            </p>
+            <p class="small mb-0">
+              <span class="fw-semibold"><%= pluralize(published, "room") %></span> open for applications
+              <span class="text-secondary">&middot; <%= pluralize(property.listings.size, "listing") %> in total</span>
+            </p>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "No properties yet.", icon: "building" %>
+  <% end %>
+</section>

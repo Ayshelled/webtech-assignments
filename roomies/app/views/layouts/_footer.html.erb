@@ -1,0 +1,11 @@
+<footer class="site-footer py-4 mt-5">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-2 small">
+    <span><strong>Roomies</strong> &middot; Team Concaruz</span>
+    <nav aria-label="Footer navigation" class="d-flex flex-wrap gap-3">
+      <%= link_to "Rooms", listings_path %>
+      <%= link_to "Neighborhoods", neighborhoods_path %>
+      <%= link_to "Properties", properties_path %>
+    </nav>
+    <span>Web Technologies &middot; <%= Date.current.year %></span>
+  </div>
+</footer>

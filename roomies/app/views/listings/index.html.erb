@@ -1,0 +1,26 @@
+<% content_for :title, "Search rooms" %>
+
+<section class="page-header">
+  <div class="container">
+    <p class="section-label mb-2">Search rooms</p>
+    <h1 class="h2 mb-4">Rooms open for applications</h1>
+    <%= render "listings/search_form", neighborhoods: @neighborhoods, amenities: @amenities, filters: @filters %>
+  </div>
+</section>
+
+<section class="container py-5" aria-label="Results">
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+    <p class="mb-0 text-secondary"><%= pluralize(@listings.size, "room") %> found</p>
+    <% if @filters.values.any? %>
+      <%= link_to "Clear filters", listings_path, class: "btn btn-sm btn-outline-secondary" %>
+    <% end %>
+  </div>
+
+  <% if @listings.any? %>
+    <div class="row g-4">
+      <%= render partial: "listings/listing", collection: @listings, as: :listing %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "No published rooms match these filters. Try widening your search.", icon: "search" %>
+  <% end %>
+</section>

@@ -131,6 +131,7 @@ Table property_amenities {
 Table listings {
   id                   bigint          [pk, increment]
   property_id          bigint          [not null]
+  title                varchar(100)    [not null]
   status               listing_status  [not null, default: 'draft']
   monthly_rent         decimal(10,2)   [not null]
   deposit              decimal(10,2)   [not null, default: 0]

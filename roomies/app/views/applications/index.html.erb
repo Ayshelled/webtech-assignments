@@ -1,0 +1,61 @@
+<% content_for :title, "Applications" %>
+
+<section class="page-header">
+  <div class="container">
+    <p class="section-label mb-2">Applications</p>
+    <h1 class="h2 mb-1">Applications to rooms</h1>
+    <p class="text-secondary mb-3">Seekers' applications and where each one stands in its lifecycle.</p>
+
+    <nav aria-label="Filter by status">
+      <ul class="nav nav-pills gap-1 flex-wrap">
+        <li class="nav-item">
+          <%= link_to applications_path, class: class_names("nav-link", active: @status.nil?) do %>
+            All <span class="badge text-bg-light ms-1"><%= @status_counts.values.sum %></span>
+          <% end %>
+        </li>
+        <% Application.statuses.each_key do |status| %>
+          <li class="nav-item">
+            <%= link_to applications_path(status: status), class: class_names("nav-link", active: @status == status) do %>
+              <%= status.humanize %> <span class="badge text-bg-light ms-1"><%= @status_counts.fetch(status, 0) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="container py-5">
+  <% if @applications.any? %>
+    <div class="table-responsive detail-panel">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Seeker</th>
+            <th scope="col">Room</th>
+            <th scope="col">Neighborhood</th>
+            <th scope="col">Move-in</th>
+            <th scope="col">Stay</th>
+            <th scope="col">Status</th>
+            <th scope="col">Sent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @applications.each do |application| %>
+            <tr>
+              <td><%= link_to application.user.full_name, application_path(application), class: "fw-semibold" %></td>
+              <td><%= link_to application.listing.title, listing_path(application.listing), class: "link-secondary" %></td>
+              <td><%= application.listing.property.neighborhood.name %></td>
+              <td class="text-nowrap"><%= short_date(application.desired_move_in_date) %></td>
+              <td class="text-nowrap"><%= pluralize(application.intended_stay_months, "month") %></td>
+              <td><%= status_badge(application.status) %></td>
+              <td class="text-nowrap text-secondary small"><%= short_date(application.created_at.to_date) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "No applications in this state.", icon: "envelope-open" %>
+  <% end %>
+</section>

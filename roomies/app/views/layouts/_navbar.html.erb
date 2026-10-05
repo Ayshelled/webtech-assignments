@@ -1,0 +1,27 @@
+<header>
+  <nav class="navbar navbar-expand-lg border-bottom" aria-label="Main navigation">
+    <div class="container py-2">
+      <%= link_to root_path, class: "navbar-brand" do %>Roomies<span class="brand-dot">.</span><% end %>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+              aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+          <li class="nav-item"><%= nav_link "Search rooms", listings_path, "listings" %></li>
+          <li class="nav-item"><%= nav_link "Neighborhoods", neighborhoods_path, "neighborhoods" %></li>
+          <li class="nav-item"><%= nav_link "Properties", properties_path, "properties" %></li>
+          <li class="nav-item"><%= nav_link "Applications", applications_path, "applications" %></li>
+          <li class="nav-item"><%= link_to "How it works", root_path(anchor: "how-it-works"), class: "nav-link" %></li>
+          <%# Accounts arrive in a later assignment %>
+          <li class="nav-item">
+            <span class="nav-link disabled" aria-disabled="true" title="Coming soon">Log in</span>
+          </li>
+          <li class="nav-item">
+            <span class="btn btn-coral px-3 disabled" aria-disabled="true" title="Coming soon">Sign up</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

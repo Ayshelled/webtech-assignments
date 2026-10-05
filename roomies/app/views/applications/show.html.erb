@@ -1,0 +1,70 @@
+<% content_for :title, "Application by #{@application.user.full_name}" %>
+<% listing = @application.listing %>
+
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><%= link_to "Applications", applications_path %></li>
+        <li class="breadcrumb-item active" aria-current="page"><%= @application.user.full_name %></li>
+      </ol>
+    </nav>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <h1 class="h2 mb-0 me-2">Application by <%= @application.user.full_name %></h1>
+      <%= status_badge(@application.status) %>
+    </div>
+    <p class="text-secondary mb-0 mt-1">Sent <%= date_time(@application.created_at) %></p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-8">
+      <section class="mb-5" aria-labelledby="message-title">
+        <h2 id="message-title" class="h4">Introduction</h2>
+        <blockquote class="detail-panel p-3 mb-3"><%= simple_format(@application.message) %></blockquote>
+        <dl class="row mb-0">
+          <dt class="col-sm-4 fw-normal text-secondary">Desired move-in</dt>
+          <dd class="col-sm-8"><%= short_date(@application.desired_move_in_date) %></dd>
+          <dt class="col-sm-4 fw-normal text-secondary">Intended stay</dt>
+          <dd class="col-sm-8"><%= pluralize(@application.intended_stay_months, "month") %></dd>
+        </dl>
+      </section>
+
+      <section aria-labelledby="visits-title">
+        <h2 id="visits-title" class="h4 mb-3">Visits</h2>
+        <% if @visits.any? %>
+          <ol class="list-unstyled d-flex flex-column gap-3 mb-0">
+            <% @visits.each do |visit| %>
+              <li class="detail-panel p-3">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                  <span class="fw-semibold"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i><%= date_time(visit.scheduled_at) %></span>
+                  <%= status_badge(visit.status) %>
+                </div>
+                <% if visit.review %>
+                  <div class="mt-2 pt-2 border-top">
+                    <%= rating_stars(visit.review.rating) %>
+                    <p class="mb-0 mt-1 small"><%= visit.review.comment %></p>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+          </ol>
+        <% else %>
+          <p class="text-secondary">No visits have been arranged for this application.</p>
+        <% end %>
+      </section>
+    </div>
+
+    <aside class="col-lg-4">
+      <h2 class="h5 mb-3">Room applied for</h2>
+      <div class="row">
+        <%= render "listings/listing", listing: listing, col_class: "col-12", show_status: true %>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">
+        Hosted by <%= listing.property.user.full_name %> &middot;
+        <%= link_to "View property", property_path(listing.property) %>
+      </p>
+    </aside>
+  </div>
+</div>

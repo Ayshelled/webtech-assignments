@@ -24,7 +24,11 @@ class Listing < ApplicationRecord
   # Rooms you can move into on that date: already available on it or before
   scope :available_by, ->(date) { where(available_from: ..date) }
   scope :newest_first, -> { order(created_at: :desc) }
+  scope :with_amenity, ->(amenity_id) {
+    where(property_id: PropertyAmenity.where(amenity_id: amenity_id).select(:property_id))
+  }
 
+  validates :title, presence: true, length: { maximum: 100 }
   validates :monthly_rent, numericality: { greater_than: 0 }
   validates :deposit, numericality: { greater_than_or_equal_to: 0 }
   validates :minimum_stay_months, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
@@ -32,6 +36,11 @@ class Listing < ApplicationRecord
   validates :description, presence: true
   validates :furnished, :private_bathroom, inclusion: { in: [true, false] }
   validate :available_from_cannot_be_in_the_past, if: :will_save_change_to_available_from?
+
+  # First photo by position; uses the preloaded photos when the controller includes them
+  def cover_photo
+    listing_photos.first
+  end
 
   private
 
