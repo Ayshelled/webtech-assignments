@@ -1,0 +1,16 @@
+<%# What the host can do from the property page. Locals: property %>
+<% if current_user == property.user %>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <%= link_to new_property_listing_path(property), class: "btn btn-sm btn-coral" do %>
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add a room
+    <% end %>
+    <%= link_to "Edit property", edit_property_path(property), class: "btn btn-sm btn-outline-secondary" %>
+    <%= button_to "Delete property", property_path(property), method: :delete, class: "btn btn-sm btn-outline-danger",
+                  form: { data: { turbo_confirm: "Delete this property and all its listings, applications and reviews?" } } %>
+  </div>
+<% else %>
+  <p class="small text-secondary mt-3 mb-0">
+    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+    Act as <%= property.user.full_name %> (the host) to add rooms or edit this property.
+  </p>
+<% end %>

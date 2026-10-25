@@ -1,5 +1,7 @@
 <% content_for :title, "Application by #{@application.user.full_name}" %>
 <% listing = @application.listing %>
+<% host   = current_user == listing.property.user %>
+<% seeker = current_user == @application.user %>
 
 <section class="page-header">
   <div class="container">
@@ -14,6 +16,14 @@
       <%= status_badge(@application.status) %>
     </div>
     <p class="text-secondary mb-0 mt-1">Sent <%= date_time(@application.created_at) %></p>
+    <% if seeker && (@application.pending? || @application.shortlisted?) %>
+      <div class="mt-3 d-inline-block"><%= render "applications/withdraw_button", application: @application %></div>
+    <% elsif !host && !seeker %>
+      <p class="small text-secondary mt-3 mb-0">
+        <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+        Act as <%= @application.user.full_name %> (the seeker) or <%= listing.property.user.full_name %> (the host) to manage it.
+      </p>
+    <% end %>
   </div>
 </section>
 
@@ -41,6 +51,7 @@
                   <span class="fw-semibold"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i><%= date_time(visit.scheduled_at) %></span>
                   <%= status_badge(visit.status) %>
                 </div>
+                <%= render "visits/actions", visit: visit, host: host, seeker: seeker %>
                 <% if visit.review %>
                   <div class="mt-2 pt-2 border-top">
                     <%= rating_stars(visit.review.rating) %>
@@ -52,6 +63,20 @@
           </ol>
         <% else %>
           <p class="text-secondary">No visits have been arranged for this application.</p>
+        <% end %>
+
+        <% if host && @application.shortlisted? %>
+          <div class="detail-panel p-4 mt-4">
+            <h3 class="h6 mb-3">Propose a visit</h3>
+            <%= render "visits/form", visit: @visit, url: application_visits_path(@application), submit_label: "Propose visit" %>
+          </div>
+        <% elsif host && @application.pending? %>
+          <p class="small text-secondary mt-3 mb-0">Shortlist this application to propose a visit.</p>
+        <% end %>
+        <% if seeker && @visits.any? { |visit| visit.completed? && visit.review.nil? } %>
+          <p class="mt-3 mb-0">
+            <%= link_to "Write a review of the property", property_path(listing.property, anchor: "reviews-title"), class: "btn btn-sm btn-coral" %>
+          </p>
         <% end %>
       </section>
     </div>

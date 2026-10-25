@@ -1,0 +1,13 @@
+<%# Propose or reschedule a visit. Locals: visit, url, submit_label, method (optional, :post by default) %>
+<%= form_with model: visit, url: url, method: local_assigns.fetch(:method, :post) do |f| %>
+  <%= render "shared/form_errors", record: visit %>
+
+  <div class="mb-3">
+    <%= f.label :scheduled_at, "Date and time", class: "form-label" %>
+    <%= f.datetime_local_field :scheduled_at, class: field_class(f, :scheduled_at), required: true,
+                                              min: Time.current.strftime("%Y-%m-%dT%H:%M") %>
+    <%= field_errors(f, :scheduled_at) %>
+  </div>
+
+  <%= f.submit submit_label, class: "btn btn-coral" %>
+<% end %>

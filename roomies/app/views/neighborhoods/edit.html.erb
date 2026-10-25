@@ -1,0 +1,6 @@
+<% content_for :title, "Edit #{@neighborhood.name_was}" %>
+<%= render "shared/form_header", title: "Edit #{@neighborhood.name_was}", back_label: "Neighborhoods", back_path: neighborhoods_path %>
+
+<div class="container py-5">
+  <div class="row"><div class="col-lg-8"><%= render "form", neighborhood: @neighborhood %></div></div>
+</div>

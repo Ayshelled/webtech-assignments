@@ -1,0 +1,9 @@
+<% content_for :title, "New room" %>
+<%= render "shared/form_header", title: "New room", back_label: @property.street_address, back_path: property_path(@property),
+           subtitle: "It is saved as a draft: only you can see it until you publish it." %>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8"><%= render "form", listing: @listing, url: property_listings_path(@property) %></div>
+  </div>
+</div>

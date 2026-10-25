@@ -1,0 +1,7 @@
+<% content_for :title, "Register a property" %>
+<%= render "shared/form_header", title: "Register a property", back_label: "Properties", back_path: properties_path,
+           subtitle: "First the home, then the rooms you want to publish inside it. You will be its host." %>
+
+<div class="container py-5">
+  <div class="row"><div class="col-lg-8"><%= render "form", property: @property %></div></div>
+</div>

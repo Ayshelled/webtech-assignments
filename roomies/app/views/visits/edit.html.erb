@@ -1,0 +1,14 @@
+<% content_for :title, "Reschedule visit" %>
+<%= render "shared/form_header", title: "Reschedule visit", back_label: "Application",
+           back_path: application_path(@visit.application),
+           subtitle: "Currently #{date_time(@visit.scheduled_at)}. The seeker will have to confirm the new date." %>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="detail-panel p-4">
+        <%= render "visits/form", visit: @new_visit, url: visit_path(@visit), submit_label: "Propose new date", method: :patch %>
+      </div>
+    </div>
+  </div>
+</div>

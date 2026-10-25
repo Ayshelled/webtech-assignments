@@ -1,0 +1,33 @@
+<%# Locals: review, url, visits (completed visits to choose from, only when creating) %>
+<%= form_with model: review, url: url do |f| %>
+  <%= render "shared/form_errors", record: review %>
+
+  <% if review.new_record? %>
+    <% if visits.size == 1 %>
+      <%= f.hidden_field :visit_id, value: visits.first.id %>
+    <% else %>
+      <div class="mb-3">
+        <%= f.label :visit_id, "Which visit?", class: "form-label" %>
+        <%= f.select :visit_id, visits.map { |visit| ["#{visit.application.listing.title} · #{short_date(visit.scheduled_at.to_date)}", visit.id] },
+                     {}, class: field_class(f, :visit_id, :visit, base: "form-select"), required: true %>
+        <%= field_errors(f, :visit_id, :visit) %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :rating, class: "form-label" %>
+    <%= f.select :rating, [["5 · Excellent", 5], ["4 · Very good", 4], ["3 · Good", 3], ["2 · Fair", 2], ["1 · Poor", 1]],
+                 { prompt: "How was it?" }, class: field_class(f, :rating, base: "form-select"), required: true %>
+    <%= field_errors(f, :rating) %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :comment, class: "form-label" %>
+    <%= f.text_area :comment, rows: 4, class: field_class(f, :comment), required: true,
+                              placeholder: "How was the room, the house and the people you met?" %>
+    <%= field_errors(f, :comment) %>
+  </div>
+
+  <%= f.submit review.new_record? ? "Publish review" : "Save changes", class: "btn btn-coral" %>
+<% end %>

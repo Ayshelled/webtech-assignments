@@ -2,11 +2,40 @@ Rails.application.routes.draw do
   # The Assignment 1 landing page is the home of the application
   root "pages#home"
 
-  # Read-only for Assignment 2: nothing creates, edits or deletes records yet
-  resources :listings,      only: %i[index show]
-  resources :properties,    only: %i[index show]
-  resources :neighborhoods, only: %i[index show]
-  resources :applications,  only: %i[index show]
+  # Who you are acting as. Assignment 4 replaces it with real accounts.
+  resource :acting_user, only: :update
+
+  # Catalogs
+  resources :neighborhoods
+  resources :amenities, except: :show
+
+  # A listing is always created inside a property, and reviews are written from the property page
+  resources :properties do
+    resources :listings, only: %i[new create]
+    resources :reviews,  only: :create
+  end
+
+  # Seekers apply from the listing page
+  resources :listings, only: %i[index show edit update destroy] do
+    resources :applications, only: :create
+  end
+
+  # Hosts propose visits on an application
+  resources :applications, only: %i[index show] do
+    patch :withdraw, on: :member
+    resources :visits, only: :create
+  end
+
+  # edit/update reschedule a visit: the old one is cancelled and a new one is proposed
+  resources :visits, only: %i[edit update] do
+    member do
+      patch :confirm
+      patch :cancel
+      patch :complete
+    end
+  end
+
+  resources :reviews, only: %i[edit update destroy]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

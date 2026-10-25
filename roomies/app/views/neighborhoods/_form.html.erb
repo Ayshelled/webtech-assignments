@@ -1,0 +1,25 @@
+<%# Locals: neighborhood %>
+<%= form_with model: neighborhood, class: "detail-panel p-4" do |f| %>
+  <%= render "shared/form_errors", record: neighborhood %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.label :name, class: "form-label" %>
+      <%= f.text_field :name, class: field_class(f, :name), required: true, maxlength: 100,
+                              placeholder: "e.g. Ñuñoa" %>
+      <%= field_errors(f, :name) %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :city, class: "form-label" %>
+      <%= f.text_field :city, class: field_class(f, :city), required: true, maxlength: 100,
+                              placeholder: "e.g. Santiago" %>
+      <%= field_errors(f, :city) %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= f.submit class: "btn btn-coral" %>
+    <%= link_to "Cancel", neighborhood.persisted? ? neighborhood_path(neighborhood) : neighborhoods_path,
+                class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

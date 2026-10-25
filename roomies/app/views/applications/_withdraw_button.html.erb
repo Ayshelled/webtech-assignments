@@ -1,0 +1,6 @@
+<%# Only while the host hasn't decided. Locals: application %>
+<% if current_user == application.user && (application.pending? || application.shortlisted?) %>
+  <%= button_to "Withdraw application", withdraw_application_path(application), method: :patch,
+                class: "btn btn-sm btn-outline-danger w-100",
+                form: { data: { turbo_confirm: "Withdraw your application? You won't be able to apply to this room again." } } %>
+<% end %>

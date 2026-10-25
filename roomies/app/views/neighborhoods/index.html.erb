@@ -1,10 +1,15 @@
 <% content_for :title, "Neighborhoods" %>
 
 <section class="page-header">
-  <div class="container">
-    <p class="section-label mb-2">Neighborhoods</p>
-    <h1 class="h2 mb-1">Where do you want to live?</h1>
-    <p class="text-secondary mb-0">The neighborhoods hosts can choose from when they register a property.</p>
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+    <div>
+      <p class="section-label mb-2">Neighborhoods</p>
+      <h1 class="h2 mb-1">Where do you want to live?</h1>
+      <p class="text-secondary mb-0">The neighborhoods hosts can choose from when they register a property.</p>
+    </div>
+    <%= link_to new_neighborhood_path, class: "btn btn-coral" do %>
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add a neighborhood
+    <% end %>
   </div>
 </section>
 

@@ -1,0 +1,82 @@
+<%# Locals: listing, url %>
+<%= form_with model: listing, url: url, class: "detail-panel p-4" do |f| %>
+  <%= render "shared/form_errors", record: listing %>
+
+  <div class="row g-3">
+    <div class="col-12">
+      <%= f.label :title, class: "form-label" %>
+      <%= f.text_field :title, class: field_class(f, :title), required: true, maxlength: 100,
+                               placeholder: "e.g. Bright room with a balcony near Metro Ñuble" %>
+      <%= field_errors(f, :title) %>
+    </div>
+
+    <div class="col-md-6">
+      <%= f.label :monthly_rent, "Monthly rent (CLP)", class: "form-label" %>
+      <div class="input-group has-validation">
+        <span class="input-group-text">$</span>
+        <%= f.number_field :monthly_rent, class: field_class(f, :monthly_rent), required: true, min: 1, step: 1,
+                                          placeholder: "350000" %>
+      </div>
+      <%= field_errors(f, :monthly_rent) %>
+    </div>
+
+    <div class="col-md-6">
+      <%= f.label :deposit, "Deposit (CLP)", class: "form-label" %>
+      <div class="input-group has-validation">
+        <span class="input-group-text">$</span>
+        <%= f.number_field :deposit, class: field_class(f, :deposit), required: true, min: 0, step: 1,
+                                     placeholder: "0 if there is none" %>
+      </div>
+      <%= field_errors(f, :deposit) %>
+    </div>
+
+    <div class="col-md-6">
+      <%= f.label :available_from, class: "form-label" %>
+      <%# A new room can't be available in the past; an old date stays editable until it changes %>
+      <%= f.date_field :available_from, class: field_class(f, :available_from), required: true,
+                                        min: (Date.current if listing.new_record?) %>
+      <%= field_errors(f, :available_from) %>
+    </div>
+
+    <div class="col-md-6">
+      <%= f.label :minimum_stay_months, "Minimum stay (months)", class: "form-label" %>
+      <%= f.number_field :minimum_stay_months, class: field_class(f, :minimum_stay_months), required: true,
+                                               min: 1, max: 36, step: 1 %>
+      <%= field_errors(f, :minimum_stay_months) %>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-check form-switch">
+        <%= f.check_box :furnished, class: "form-check-input", role: "switch" %>
+        <%= f.label :furnished, "The room is furnished", class: "form-check-label" %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-check form-switch">
+        <%= f.check_box :private_bathroom, class: "form-check-input", role: "switch" %>
+        <%= f.label :private_bathroom, "It has a private bathroom", class: "form-check-label" %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <%= f.label :description, class: "form-label" %>
+      <%= f.text_area :description, rows: 6, class: field_class(f, :description), required: true,
+                                    placeholder: "The room, the light, the house and the people who live there." %>
+      <%= field_errors(f, :description) %>
+    </div>
+
+    <div class="col-12">
+      <%= f.label :house_rules, class: "form-label" %>
+      <%= f.text_area :house_rules, rows: 4, class: field_class(f, :house_rules),
+                                    placeholder: "Optional: pets, guests, quiet hours, cleaning..." %>
+      <%= field_errors(f, :house_rules) %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= f.submit listing.persisted? ? "Save changes" : "Save as draft", class: "btn btn-coral" %>
+    <%= link_to "Cancel", listing.persisted? ? listing_path(listing) : property_path(listing.property),
+                class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

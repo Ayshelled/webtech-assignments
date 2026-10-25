@@ -1,0 +1,29 @@
+<%# Apply form, inside the listing page. Locals: listing, application %>
+<h2 class="h6 mb-3">Apply for this room</h2>
+<%= form_with model: application, url: listing_applications_path(listing) do |f| %>
+  <%= render "shared/form_errors", record: application %>
+
+  <div class="mb-3">
+    <%= f.label :message, "Introduce yourself", class: "form-label" %>
+    <%= f.text_area :message, rows: 4, class: field_class(f, :message), required: true,
+                              placeholder: "Who you are, what you do, and why this room fits you." %>
+    <%= field_errors(f, :message) %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :desired_move_in_date, "Move-in date", class: "form-label" %>
+    <%= f.date_field :desired_move_in_date, class: field_class(f, :desired_move_in_date), required: true,
+                                            min: [listing.available_from, Date.current].max %>
+    <%= field_errors(f, :desired_move_in_date) %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :intended_stay_months, "How long will you stay? (months)", class: "form-label" %>
+    <%= f.number_field :intended_stay_months, class: field_class(f, :intended_stay_months), required: true,
+                                              min: 1, max: 36, step: 1, placeholder: "e.g. #{listing.minimum_stay_months}" %>
+    <%= field_errors(f, :intended_stay_months) %>
+    <div class="form-text">The minimum stay is <%= pluralize(listing.minimum_stay_months, "month") %>.</div>
+  </div>
+
+  <%= f.submit "Send application", class: "btn btn-coral w-100" %>
+<% end %>

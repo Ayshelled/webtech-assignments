@@ -1,0 +1,11 @@
+<%# Summary at the top of a form. Each message is also shown next to its field. Locals: record %>
+<% if record.errors.any? %>
+  <div class="alert alert-danger" role="alert">
+    <p class="fw-semibold mb-1"><%= pluralize(record.errors.count, "problem") %> prevented this from being saved:</p>
+    <ul class="mb-0 small">
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

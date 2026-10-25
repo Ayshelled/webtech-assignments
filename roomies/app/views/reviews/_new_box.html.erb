@@ -1,0 +1,11 @@
+<%# Review form on the property page, shown only after a completed visit. Locals: property, review, visits %>
+<% if visits.any? %>
+  <div class="detail-panel p-4 mb-4">
+    <h3 class="h5 mb-1">Review this property</h3>
+    <p class="small text-secondary">
+      You visited <%= visits.first.application.listing.title %> on <%= short_date(visits.first.scheduled_at.to_date) %>.
+      Tell other seekers what to expect.
+    </p>
+    <%= render "reviews/form", review: review, url: property_reviews_path(property), visits: visits %>
+  </div>
+<% end %>

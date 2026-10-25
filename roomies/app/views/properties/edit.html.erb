@@ -1,0 +1,7 @@
+<% content_for :title, "Edit property" %>
+<%= render "shared/form_header", title: "Edit property", back_label: "Properties", back_path: properties_path,
+           subtitle: @property.street_address_was %>
+
+<div class="container py-5">
+  <div class="row"><div class="col-lg-8"><%= render "form", property: @property %></div></div>
+</div>

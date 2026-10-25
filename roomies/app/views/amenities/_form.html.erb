@@ -1,0 +1,25 @@
+<%# Locals: amenity %>
+<%= form_with model: amenity, class: "detail-panel p-4" do |f| %>
+  <%= render "shared/form_errors", record: amenity %>
+
+  <div class="row g-3">
+    <div class="col-md-7">
+      <%= f.label :name, class: "form-label" %>
+      <%= f.text_field :name, class: field_class(f, :name), required: true, maxlength: 60,
+                              placeholder: "e.g. Wi-Fi, Washing machine, Terrace" %>
+      <%= field_errors(f, :name) %>
+    </div>
+    <div class="col-md-5">
+      <%= f.label :category, class: "form-label" %>
+      <%= f.select :category, Amenity.categories.keys.map { |category| [category.humanize, category] },
+                   {}, class: field_class(f, :category, base: "form-select"), required: true %>
+      <%= field_errors(f, :category) %>
+      <div class="form-text">A shared space is a room of the house, like a kitchen or a terrace.</div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= f.submit class: "btn btn-coral" %>
+    <%= link_to "Cancel", amenities_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

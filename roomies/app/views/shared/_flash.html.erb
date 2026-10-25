@@ -1,0 +1,10 @@
+<%# Flash messages as Bootstrap alerts. The #flash container is also a Turbo Stream target. %>
+<div id="flash" class="container">
+  <% flash.each do |type, message| %>
+    <% next unless message.is_a?(String) %>
+    <div class="alert alert-<%= flash_class(type) %> alert-dismissible fade show mt-3 mb-0" role="alert">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+</div>

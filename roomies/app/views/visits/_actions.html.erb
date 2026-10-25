@@ -1,0 +1,18 @@
+<%# The buttons of a visit change with its state and with who you are. Locals: visit, host, seeker %>
+<% buttons = [] %>
+<% if seeker && visit.proposed? %>
+  <% buttons << button_to("Confirm", confirm_visit_path(visit), method: :patch, class: "btn btn-sm btn-coral") %>
+<% end %>
+<% if host && (visit.proposed? || visit.confirmed?) %>
+  <% buttons << link_to("Reschedule", edit_visit_path(visit), class: "btn btn-sm btn-outline-secondary") %>
+<% end %>
+<% if host && visit.confirmed? %>
+  <% buttons << button_to("Mark as completed", complete_visit_path(visit), method: :patch, class: "btn btn-sm btn-outline-success") %>
+<% end %>
+<% if (host || seeker) && (visit.proposed? || visit.confirmed?) %>
+  <% buttons << button_to("Cancel visit", cancel_visit_path(visit), method: :patch, class: "btn btn-sm btn-outline-danger",
+                          form: { data: { turbo_confirm: "Cancel this visit?" } }) %>
+<% end %>
+<% if buttons.any? %>
+  <div class="d-flex flex-wrap gap-2 mt-2"><%= safe_join(buttons) %></div>
+<% end %>

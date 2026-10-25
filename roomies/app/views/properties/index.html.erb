@@ -1,10 +1,15 @@
 <% content_for :title, "Properties" %>
 
 <section class="page-header">
-  <div class="container">
-    <p class="section-label mb-2">Properties</p>
-    <h1 class="h2 mb-1">Homes on Roomies</h1>
-    <p class="text-secondary mb-0">Every shared home whose rooms are published on Roomies.</p>
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+    <div>
+      <p class="section-label mb-2">Properties</p>
+      <h1 class="h2 mb-1">Homes on Roomies</h1>
+      <p class="text-secondary mb-0">Every shared home whose rooms are published on Roomies.</p>
+    </div>
+    <%= link_to new_property_path, class: "btn btn-coral" do %>
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Register a property
+    <% end %>
   </div>
 </section>
 

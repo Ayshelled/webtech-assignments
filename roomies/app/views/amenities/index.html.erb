@@ -1,0 +1,45 @@
+<% content_for :title, "Amenities" %>
+
+<section class="page-header">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+    <div>
+      <p class="section-label mb-2">Catalog</p>
+      <h1 class="h2 mb-1">Amenities and shared spaces</h1>
+      <p class="text-secondary mb-0">What hosts can say their property offers.</p>
+    </div>
+    <%= link_to new_amenity_path, class: "btn btn-coral" do %>
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add to the catalog
+    <% end %>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <% { "Amenities" => @amenities, "Shared spaces" => @shared_spaces }.each do |label, items| %>
+      <section class="col-lg-6" aria-label="<%= label %>">
+        <h2 class="h5 mb-3"><%= label %></h2>
+        <% if items.any? %>
+          <div class="detail-panel">
+            <ul class="list-group list-group-flush">
+              <% items.each do |amenity| %>
+                <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                  <span>
+                    <%= amenity.name %>
+                    <span class="small text-secondary ms-1"><%= pluralize(@property_counts.fetch(amenity.id, 0), "property", plural: "properties") %></span>
+                  </span>
+                  <span class="d-flex gap-2">
+                    <%= link_to "Edit", edit_amenity_path(amenity), class: "btn btn-sm btn-outline-secondary" %>
+                    <%= button_to "Delete", amenity_path(amenity), method: :delete, class: "btn btn-sm btn-outline-danger",
+                                  form: { data: { turbo_confirm: "Remove #{amenity.name} from the catalog and from every property that has it?" } } %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% else %>
+          <%= render "shared/empty_state", message: "Nothing here yet.", icon: "list-check" %>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+</div>

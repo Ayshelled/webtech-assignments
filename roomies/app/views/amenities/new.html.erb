@@ -1,0 +1,6 @@
+<% content_for :title, "New amenity" %>
+<%= render "shared/form_header", title: "Add to the catalog", back_label: "Amenities", back_path: amenities_path %>
+
+<div class="container py-5">
+  <div class="row"><div class="col-lg-8"><%= render "form", amenity: @amenity %></div></div>
+</div>

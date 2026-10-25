@@ -1,0 +1,7 @@
+<% content_for :title, "New neighborhood" %>
+<%= render "shared/form_header", title: "New neighborhood", back_label: "Neighborhoods", back_path: neighborhoods_path,
+           subtitle: "Hosts choose from this catalog when they register a property." %>
+
+<div class="container py-5">
+  <div class="row"><div class="col-lg-8"><%= render "form", neighborhood: @neighborhood %></div></div>
+</div>

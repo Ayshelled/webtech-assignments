@@ -1,0 +1,18 @@
+<%# The apply block of the listing page. Locals: listing, my_application, application %>
+<% if current_user.nil? %>
+  <p class="small text-secondary mb-0">
+    <i class="bi bi-person-circle me-1" aria-hidden="true"></i>
+    Choose who you are acting as in the navigation bar to apply.
+  </p>
+<% elsif current_user == listing.property.user %>
+  <p class="small mb-0">
+    <i class="bi bi-house-check me-1" aria-hidden="true"></i>
+    This is your room. <%= link_to "See the applications", applications_path %>
+  </p>
+<% elsif my_application %>
+  <%= render "applications/status", application: my_application %>
+<% elsif !listing.published? %>
+  <p class="small text-secondary mb-0">This room is not open for applications.</p>
+<% else %>
+  <%= render "applications/form", listing: listing, application: application %>
+<% end %>

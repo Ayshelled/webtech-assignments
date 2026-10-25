@@ -18,6 +18,7 @@
     <i class="bi bi-geo-alt" aria-hidden="true"></i>
     <%= @property.street_address %>, <%= @property.neighborhood.name %>, <%= @property.neighborhood.city %>
   </p>
+  <%= render "listings/host_actions", listing: @listing %>
 
   <%# Photo gallery: the first photo large, the rest as a strip %>
   <% if photos.any? %>
@@ -100,8 +101,7 @@
           <dd class="col-6 text-end mb-0"><%= @listing.private_bathroom? ? "Yes" : "No" %></dd>
         </dl>
         <hr>
-        <%# Applying needs an account, which arrives in a later assignment %>
-        <button type="button" class="btn btn-coral w-100" disabled>Log in to apply</button>
+        <%= render "listings/application_box", listing: @listing, my_application: @my_application, application: @application %>
       </div>
     </aside>
   </div>

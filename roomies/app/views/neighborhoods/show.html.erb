@@ -14,6 +14,11 @@
       <%= pluralize(@listings.size, "room") %> open for applications in
       <%= pluralize(@properties.size, "property") %>
     </p>
+    <div class="d-flex gap-2 mt-3">
+      <%= link_to "Edit", edit_neighborhood_path(@neighborhood), class: "btn btn-sm btn-outline-secondary" %>
+      <%= button_to "Delete", neighborhood_path(@neighborhood), method: :delete, class: "btn btn-sm btn-outline-danger",
+                    form: { data: { turbo_confirm: "Remove #{@neighborhood.name} from the catalog?" } } %>
+    </div>
   </div>
 </section>
 

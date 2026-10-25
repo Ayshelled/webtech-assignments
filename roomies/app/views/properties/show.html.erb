@@ -16,6 +16,7 @@
       <%= pluralize(@property.bathrooms_count, "bathroom") %> &middot;
       Hosted by <%= @property.user.full_name %>
     </p>
+    <%= render "properties/host_actions", property: @property %>
   </div>
 </section>
 
@@ -36,6 +37,7 @@
 
       <section aria-labelledby="reviews-title">
         <h2 id="reviews-title" class="h4 mb-3">Reviews</h2>
+        <%= render "reviews/new_box", property: @property, review: @review, visits: @reviewable_visits %>
         <%= render "properties/reviews", reviews: @reviews %>
       </section>
     </div>

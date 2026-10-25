@@ -1,0 +1,13 @@
+<%# The acting user's own application to a listing, on the listing page. Locals: application %>
+<p class="mb-1 d-flex align-items-center gap-2">
+  <span class="fw-semibold">Your application</span> <%= status_badge(application.status) %>
+</p>
+<p class="small text-secondary mb-3">
+  Sent <%= short_date(application.created_at.to_date) %> &middot;
+  Move-in <%= short_date(application.desired_move_in_date) %> &middot;
+  <%= pluralize(application.intended_stay_months, "month") %>
+</p>
+<div class="d-grid gap-2">
+  <%= link_to "View your application", application_path(application), class: "btn btn-sm btn-outline-secondary" %>
+  <%= render "applications/withdraw_button", application: application %>
+</div>
