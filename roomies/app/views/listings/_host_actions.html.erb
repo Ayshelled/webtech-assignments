@@ -1,13 +1,39 @@
-<%# What the host can do from the listing page. Locals: listing %>
+<%# What the host can do from the listing page. The lifecycle buttons change with the
+    listing's state (Listing::TRANSITIONS). Locals: listing %>
 <% if current_user == listing.property.user %>
-  <div class="d-flex flex-wrap gap-2 mb-4">
-    <%= link_to "Edit listing", edit_listing_path(listing), class: "btn btn-sm btn-outline-secondary" %>
-    <%= button_to "Delete listing", listing_path(listing), method: :delete, class: "btn btn-sm btn-outline-danger",
-                  form: { data: { turbo_confirm: "Delete this listing and all its applications?" } } %>
+  <% hints = {
+       "draft"     => "This room is a draft: only you can see it. Publish it so seekers can find it and apply.",
+       "published" => "This room is published: seekers can find it and apply.",
+       "reserved"  => "You accepted an applicant. Mark the room as rented once your new housemate has moved in.",
+       "rented"    => "This room is rented.",
+       "withdrawn" => "This room is withdrawn: it doesn't show in the search nor take applications."
+     } %>
+  <div class="detail-panel p-3 mb-4">
+    <p class="small mb-2"><i class="bi bi-info-circle me-1" aria-hidden="true"></i><%= hints[listing.status] %></p>
+    <div class="d-flex flex-wrap gap-2">
+      <% if listing.can_change_to?(:published) %>
+        <%= button_to listing.withdrawn? ? "Publish again" : "Publish", publish_listing_path(listing), method: :patch,
+                      class: "btn btn-sm btn-coral" %>
+      <% end %>
+      <% if listing.can_change_to?(:rented) %>
+        <%= button_to "Mark as rented", mark_rented_listing_path(listing), method: :patch, class: "btn btn-sm btn-success",
+                      form: { data: { turbo_confirm: "Has your new housemate moved in? The room will be marked as rented." } } %>
+      <% end %>
+      <% if listing.can_change_to?(:withdrawn) %>
+        <%= button_to "Withdraw", withdraw_listing_path(listing), method: :patch, class: "btn btn-sm btn-outline-dark",
+                      form: { data: { turbo_confirm: "Withdraw this room? It will stop taking applications." } } %>
+      <% end %>
+      <%= link_to "Edit listing", edit_listing_path(listing), class: "btn btn-sm btn-outline-secondary" %>
+      <% if listing.published? || listing.reserved? %>
+        <%= link_to "See the applications", applications_path, class: "btn btn-sm btn-outline-secondary" %>
+      <% end %>
+      <%= button_to "Delete listing", listing_path(listing), method: :delete, class: "btn btn-sm btn-outline-danger",
+                    form: { data: { turbo_confirm: "Delete this listing and all its applications?" } } %>
+    </div>
   </div>
 <% else %>
   <p class="small text-secondary mb-4">
     <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-    Act as <%= listing.property.user.full_name %> (the host) to edit this listing.
+    Act as <%= listing.property.user.full_name %> (the host) to manage this listing.
   </p>
 <% end %>

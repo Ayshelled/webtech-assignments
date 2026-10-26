@@ -80,8 +80,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_191000) do
     t.enum "status", default: "pending", null: false, enum_type: "application_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["listing_id"], name: "index_applications_one_accepted_per_listing", unique: true, where: "(status = 'accepted'::application_status)"
     t.index ["listing_id", "user_id"], name: "index_applications_on_listing_id_and_user_id", unique: true
+    t.index ["listing_id"], name: "index_applications_one_accepted_per_listing", unique: true, where: "(status = 'accepted'::application_status)"
     t.index ["status"], name: "index_applications_on_status"
     t.index ["user_id"], name: "index_applications_on_user_id"
     t.check_constraint "intended_stay_months >= 1", name: "applications_intended_stay_positive"

@@ -81,6 +81,30 @@ Trix's JavaScript is served by the `actiontext` gem through the import map, so t
 to install: `bin/rails db:migrate` is the only step. File attachments are turned off in the
 editor because photographs belong in the listing's photo field.
 
+## Business rules and Hotwire
+
+The rules live in the models (`Listing`, `Application`, `Visit`, `Review`); the views only
+show the actions each state allows.
+
+- **Listing lifecycle:** a listing is created as a *draft*, visible only to its host. The host
+  publishes it, withdraws it (and can publish it again), and marks it as *rented* once the
+  housemate has moved in. Accepting an applicant is what moves it to *reserved*. Only
+  published listings take applications.
+- **Applications:** a seeker can't apply twice to the same listing nor to their own property.
+  The author can withdraw it while it is pending or shortlisted. The host shortlists, rejects
+  or accepts it from the application inbox (*Applications → Received*) or from its page.
+- **Accepting an applicant** (`Application#accept!`): the application is accepted, every
+  other pending or shortlisted application to the listing is rejected, and the listing is
+  reserved, in a single transaction with row locks, so if any step fails nothing changes.
+  A listing has at most one accepted application (validation + partial unique index).
+- **Visits:** proposed only on a shortlisted application, never in the past; a proposed visit
+  can be confirmed, rescheduled or cancelled, and a confirmed one completed. Only a completed
+  visit enables a review.
+- **Turbo Frame:** applying from the listing page replaces only the apply block
+  (`application_box` frame) with the confirmation and the state of the application.
+- **Turbo Stream:** answering from the inbox replaces the affected rows (on accept, also the
+  ones rejected automatically), the pending count and the flash without reloading the page.
+
 ## Tests
 
 ```bash

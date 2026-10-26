@@ -1,0 +1,11 @@
+<%# The apply block of the listing page, as a Turbo Frame: applying replaces only this
+    block (the form becomes a confirmation with the state of the application) without
+    reloading the photographs and the description. Links and buttons inside it still
+    navigate the whole page (target "_top"); only the apply form targets the frame.
+    Locals: listing, my_application, application, notice (optional) %>
+<%= turbo_frame_tag "application_box", target: "_top" do %>
+  <% if local_assigns[:notice] %>
+    <div class="alert alert-success small py-2" role="status"><%= notice %></div>
+  <% end %>
+  <%= render "listings/application_box", listing: listing, my_application: my_application, application: application %>
+<% end %>

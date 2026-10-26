@@ -1,6 +1,7 @@
 <%# Apply form, inside the listing page. Locals: listing, application %>
 <h2 class="h6 mb-3">Apply for this room</h2>
-<%= form_with model: application, url: listing_applications_path(listing) do |f| %>
+<%# Submitted inside the "application_box" Turbo Frame of the listing page %>
+<%= form_with model: application, url: listing_applications_path(listing), data: { turbo_frame: "application_box" } do |f| %>
 
   <div class="mb-3">
     <%= f.label :message, "Introduce yourself", class: "form-label" %>

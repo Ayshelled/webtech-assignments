@@ -16,7 +16,13 @@ Rails.application.routes.draw do
   end
 
   # Seekers apply from the listing page
+  # The host moves a listing through its lifecycle from the listing page
   resources :listings, only: %i[index show edit update destroy] do
+    member do
+      patch :publish
+      patch :withdraw
+      patch :mark_rented
+    end
     resources :applications, only: :create
   end
 

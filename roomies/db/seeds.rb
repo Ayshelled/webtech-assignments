@@ -312,7 +312,8 @@ ActiveRecord::Base.transaction do
               "Lovely house and a very friendly group of housemates. Bills included makes life so much easier.")
   apply.call(garden_room, tomas, :rejected, sent: 68, move_in: today - 40, stay: 6,
              message: "Hello! Is the room still available? I could move in next month.")
-  garden_room.update!(status: :rented)
+  garden_room.update!(status: :reserved) # accepting the applicant reserved it...
+  garden_room.update!(status: :rented)   # ...and the host marked it as rented after the move-in
   garden_room.update_columns(available_from: today - 45) # moved in before today
 
   apply.call(pool_room, diego, :pending, sent: 3, move_in: today + 15, stay: 12,
@@ -337,7 +338,8 @@ ActiveRecord::Base.transaction do
              message: "Hello! I work from home and a terrace would be perfect for my coffee breaks.")
   review.call(visit.call(sebastian_terrace, :completed, at.call(-100, 17)), 4,
               "Very quiet neighborhood and a beautiful garden. It's a bit far from the metro, so plan your commute.")
-  terrace_room.update!(status: :rented)
+  terrace_room.update!(status: :reserved) # accepting the applicant reserved it...
+  terrace_room.update!(status: :rented)   # ...and the host marked it as rented after the move-in
   terrace_room.update_columns(available_from: today - 90)
 
   apply.call(macul_room, benjamin, :pending, sent: 1, move_in: today + 10, stay: 6,

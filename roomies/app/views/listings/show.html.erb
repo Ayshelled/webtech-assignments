@@ -101,7 +101,7 @@
           <dd class="col-6 text-end mb-0"><%= @listing.private_bathroom? ? "Yes" : "No" %></dd>
         </dl>
         <hr>
-        <%= render "listings/application_box", listing: @listing, my_application: @my_application, application: @application %>
+        <%= render "listings/application_frame", listing: @listing, my_application: @my_application, application: @application %>
       </div>
     </aside>
   </div>

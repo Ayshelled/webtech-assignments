@@ -2,7 +2,8 @@ class ListingsController < ApplicationController
   include ListingPage
 
   before_action :set_property, only: %i[new create]
-  before_action :set_listing, only: %i[edit update destroy]
+  before_action :set_listing, only: %i[edit update destroy publish withdraw mark_rented]
+  before_action :require_host, only: %i[new create edit update destroy publish withdraw mark_rented]
   RENT_OPTIONS = [ 300_000, 400_000, 500_000, 600_000 ].freeze
 
   # Only published listings are open for applications, so they are the only ones listed.
@@ -20,8 +21,12 @@ class ListingsController < ApplicationController
     @listings.load # one query; size/any? in the view reuse the loaded records
   end
 
+  # A draft is visible only to its host
   def show
     prepare_listing_page(params.expect(:id))
+    return if @listing.visible_to?(current_user)
+
+    redirect_to listings_path, alert: "That room isn't published yet."
   end
 
   # A listing is always created inside a property, and starts as a draft
@@ -56,7 +61,37 @@ class ListingsController < ApplicationController
     redirect_to property_path(@listing.property), notice: "#{@listing.title} was deleted.", status: :see_other
   end
 
+  # Lifecycle actions of the host. The model rejects a change its state doesn't allow.
+  def publish
+    change_status(:publish!, "#{@listing.title} is published: seekers can find it and apply.")
+  end
+
+  def withdraw
+    change_status(:withdraw!, "#{@listing.title} was withdrawn and no longer takes applications.")
+  end
+
+  def mark_rented
+    change_status(:mark_rented!, "#{@listing.title} is marked as rented. Welcome home to your new housemate!")
+  end
+
   private
+
+  def change_status(action, notice)
+    @listing.public_send(action)
+    redirect_to @listing, notice: notice, status: :see_other
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to @listing, alert: "Couldn't change the listing: #{e.record.errors.full_messages.to_sentence}.",
+                          status: :see_other
+  end
+
+  # Only the host of the property manages its listings
+  def require_host
+    return if current_user && current_user == @property.user
+
+    redirect_to(@listing || property_path(@property),
+                alert: "Only the host, #{@property.user.full_name}, can manage this property's listings. " \
+                       "Choose them in the navigation bar.")
+  end
 
   def set_property
     @property = Property.find(params.expect(:property_id))

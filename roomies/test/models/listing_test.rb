@@ -42,9 +42,43 @@ class ListingTest < ActiveSupport::TestCase
     assert_includes listing.errors[:description], "can't be blank"
   end
 
+  test "a listing is created as a draft that only its host sees" do
+    listing = saved_listing
+    other = User.create!(full_name: "Seeker", email_address: "seeker@example.com", password: "password123")
+
+    assert_predicate listing, :draft?
+    assert listing.visible_to?(listing.property.user)
+    assert_not listing.visible_to?(other)
+    assert_not listing.visible_to?(nil)
+  end
+
+  test "the host publishes, withdraws and rents along the lifecycle only" do
+    listing = saved_listing
+    error = assert_raises(ActiveRecord::RecordInvalid) { listing.mark_rented! }
+    assert_match "can't change from draft to rented", error.message
+
+    listing.reload.publish!
+    assert_predicate listing, :published?
+    listing.withdraw!
+    assert_predicate listing, :withdrawn?
+    listing.publish!
+    listing.update!(status: :reserved) # what accepting an applicant does
+    listing.mark_rented!
+    assert_predicate listing, :rented?
+    assert_raises(ActiveRecord::RecordInvalid) { listing.publish! }
+  end
+
   private
 
   def upload(name, content_type)
     Rack::Test::UploadedFile.new(file_fixture(name), content_type)
+  end
+
+  def saved_listing
+    host = User.create!(full_name: "Host", email_address: "host@example.com", password: "password123")
+    property = Property.create!(user: host, neighborhood: Neighborhood.create!(name: "Ñuñoa", city: "Santiago"),
+                                street_address: "Irarrázaval 2450", property_type: :house)
+    property.listings.create!(title: "Room in Ñuñoa", monthly_rent: 350_000, deposit: 0,
+                              available_from: Date.current + 10, description: "<p>A room</p>")
   end
 end

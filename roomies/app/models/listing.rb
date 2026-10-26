@@ -18,12 +18,22 @@ class Listing < ApplicationRecord
   has_rich_text :description
   has_rich_text :house_rules
 
-  # Lifecycle: draft -> published -> reserved -> rented; withdrawn from draft or published.
-  # The enum also gives the scopes Listing.published, Listing.draft, etc.
+  # Lifecycle: a listing is created as a draft, visible only to its host. The host
+  # publishes it (and can withdraw it); accepting an applicant reserves it; the host
+  # marks it as rented once the housemate has moved in. A withdrawn listing can be
+  # published again. The enum also gives the scopes Listing.published, Listing.draft, etc.
   enum :status, {
     draft: "draft", published: "published", reserved: "reserved",
     rented: "rented", withdrawn: "withdrawn"
   }, validate: true
+
+  # The states each state can move to. Rented is final.
+  TRANSITIONS = {
+    "draft"     => %w[published withdrawn],
+    "published" => %w[reserved withdrawn],
+    "reserved"  => %w[rented],
+    "withdrawn" => %w[published]
+  }.freeze
 
   scope :in_neighborhood, ->(neighborhood_id) {
     where(property_id: Property.where(neighborhood_id: neighborhood_id).select(:id))
@@ -45,6 +55,7 @@ class Listing < ApplicationRecord
   validates :furnished, :private_bathroom, inclusion: { in: [true, false] }
   validate :available_from_cannot_be_in_the_past, if: :will_save_change_to_available_from?
   validate :uploaded_photos_must_be_valid
+  validate :status_change_must_be_allowed, on: :update, if: :will_save_change_to_status?
   validate :photos_within_limit
 
   MAX_PHOTOS = 10
@@ -66,12 +77,41 @@ class Listing < ApplicationRecord
     listing_photos.each { |photo| photo.mark_for_destruction if ids.include?(photo.id) }
   end
 
+  # The host's lifecycle actions. Reserving happens only through Application#accept!
+  def publish!
+    update!(status: :published)
+  end
+
+  def withdraw!
+    update!(status: :withdrawn)
+  end
+
+  def mark_rented!
+    update!(status: :rented)
+  end
+
+  def can_change_to?(new_status)
+    TRANSITIONS.fetch(status, []).include?(new_status.to_s)
+  end
+
+  # Only the host sees a draft
+  def visible_to?(user)
+    !draft? || (user.present? && property.user_id == user.id)
+  end
+
   # First photo by position; uses the preloaded photos when the controller includes them
   def cover_photo
     listing_photos.first
   end
 
   private
+
+  def status_change_must_be_allowed
+    from = status_in_database
+    return if TRANSITIONS.fetch(from, []).include?(status)
+
+    errors.add(:status, "can't change from #{from} to #{status}")
+  end
 
   def uploaded_photos_must_be_valid
     listing_photos.select { |photo| photo.new_record? || photo.changed? }.each do |photo|

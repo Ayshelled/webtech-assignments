@@ -23,15 +23,25 @@ class ApplicationsController < ApplicationController
     prepare_application_page(params.expect(:id))
   end
 
-  # A seeker applies from the listing page. If something is wrong, the listing
-  # page is rendered again with the errors inside the apply form.
+  # A seeker applies from the listing page, inside its "application_box" Turbo Frame:
+  # the response is just that frame, with the confirmation or the form with its errors.
+  # Without Turbo, it falls back to a redirect or to the whole listing page.
   def create
     @listing = Listing.find(params.expect(:listing_id))
     @application = @listing.applications.new(application_params)
     @application.user = current_user
 
     if @application.save
-      redirect_to listing_path(@listing), notice: "Your application was sent to the host."
+      notice = "Your application was sent to the host."
+      if turbo_frame_request?
+        # Only the apply block changes: the form is replaced by the confirmation and the state
+        @my_application, @notice = @application, notice
+        render :apply_frame
+      else
+        redirect_to listing_path(@listing), notice: notice
+      end
+    elsif turbo_frame_request?
+      render :apply_frame, status: :unprocessable_content # the form again, with the errors next to each field
     else
       prepare_listing_page(@listing.id)
       render_invalid "listings/show", @application
