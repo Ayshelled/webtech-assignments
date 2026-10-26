@@ -17,6 +17,13 @@ class ApplicationController < ActionController::Base
     @current_user = User.find_by(id: session[:acting_user_id])
   end
 
+  # A form that couldn't be saved: render it again with each error next to its
+  # field, and report the failure in a flash alert
+  def render_invalid(template, record)
+    flash.now[:alert] = "Couldn't save the #{record.model_name.human.downcase}: #{record.errors.full_messages.to_sentence}."
+    render template, status: :unprocessable_content
+  end
+
   def require_acting_user
     return if current_user
 

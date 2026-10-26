@@ -26,7 +26,7 @@ class PropertiesController < ApplicationController
     if @property.save
       redirect_to @property, notice: "Your property was registered. Now add the rooms you want to publish."
     else
-      render :new, status: :unprocessable_content
+      render_invalid :new, @property
     end
   end
 
@@ -43,7 +43,7 @@ class PropertiesController < ApplicationController
     if saved
       redirect_to @property, notice: "The property was updated."
     else
-      render :edit, status: :unprocessable_content
+      render_invalid :edit, @property
     end
   end
 

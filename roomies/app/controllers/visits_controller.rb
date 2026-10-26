@@ -12,7 +12,7 @@ class VisitsController < ApplicationController
       redirect_to application_path(@application), notice: "Visit proposed. The seeker can now confirm it."
     else
       prepare_application_page(@application.id)
-      render "applications/show", status: :unprocessable_content
+      render_invalid "applications/show", @visit
     end
   end
 
@@ -44,7 +44,7 @@ class VisitsController < ApplicationController
     redirect_to application_path(@visit.application), notice: "Visit rescheduled. The seeker can confirm the new date."
   rescue ActiveRecord::RecordInvalid
     @visit.reload
-    render :edit, status: :unprocessable_content
+    render_invalid :edit, @new_visit.errors.any? ? @new_visit : @visit
   end
 
   private

@@ -16,7 +16,7 @@ class ReviewsController < ApplicationController
       redirect_to property_path(@property), notice: "Thanks! Your review was published."
     else
       prepare_property_page(@property.id)
-      render "properties/show", status: :unprocessable_content
+      render_invalid "properties/show", @review
     end
   end
 
@@ -27,7 +27,7 @@ class ReviewsController < ApplicationController
     if @review.update(review_params.except(:visit_id))
       redirect_to property_path(@property), notice: "Your review was updated."
     else
-      render :edit, status: :unprocessable_content
+      render_invalid :edit, @review
     end
   end
 

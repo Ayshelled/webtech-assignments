@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_05_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,7 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_160000) do
     t.enum "category", default: "amenity", null: false, enum_type: "amenity_category"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_amenities_on_name", unique: true
+    t.index "lower((name)::text)", name: "index_amenities_on_lower_name", unique: true
   end
 
   create_table "applications", force: :cascade do |t|
@@ -87,7 +87,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_160000) do
     t.string "city", limit: 100, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name", "city"], name: "index_neighborhoods_on_name_and_city", unique: true
+    t.index "lower((name)::text), lower((city)::text)", name: "index_neighborhoods_on_lower_name_and_lower_city", unique: true
   end
 
   create_table "properties", force: :cascade do |t|

@@ -27,7 +27,7 @@ class ApplicationsController < ApplicationController
       redirect_to listing_path(@listing), notice: "Your application was sent to the host."
     else
       prepare_listing_page(@listing.id)
-      render "listings/show", status: :unprocessable_content
+      render_invalid "listings/show", @application
     end
   end
 

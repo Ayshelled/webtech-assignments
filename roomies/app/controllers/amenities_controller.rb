@@ -16,7 +16,7 @@ class AmenitiesController < ApplicationController
     if @amenity.save
       redirect_to amenities_path, notice: "#{@amenity.name} was added to the catalog."
     else
-      render :new, status: :unprocessable_content
+      render_invalid :new, @amenity
     end
   end
 
@@ -27,7 +27,7 @@ class AmenitiesController < ApplicationController
     if @amenity.update(amenity_params)
       redirect_to amenities_path, notice: "#{@amenity.name} was updated."
     else
-      render :edit, status: :unprocessable_content
+      render_invalid :edit, @amenity
     end
   end
 

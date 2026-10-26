@@ -1,6 +1,5 @@
 <%# Locals: review, url, visits (completed visits to choose from, only when creating) %>
 <%= form_with model: review, url: url do |f| %>
-  <%= render "shared/form_errors", record: review %>
 
   <% if review.new_record? %>
     <% if visits.size == 1 %>

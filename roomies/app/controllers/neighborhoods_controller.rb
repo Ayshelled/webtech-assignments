@@ -26,7 +26,7 @@ class NeighborhoodsController < ApplicationController
     if @neighborhood.save
       redirect_to @neighborhood, notice: "#{@neighborhood.name} was added to the catalog."
     else
-      render :new, status: :unprocessable_content
+      render_invalid :new, @neighborhood
     end
   end
 
@@ -37,7 +37,7 @@ class NeighborhoodsController < ApplicationController
     if @neighborhood.update(neighborhood_params)
       redirect_to @neighborhood, notice: "#{@neighborhood.name} was updated."
     else
-      render :edit, status: :unprocessable_content
+      render_invalid :edit, @neighborhood
     end
   end
 

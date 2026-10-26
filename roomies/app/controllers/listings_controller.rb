@@ -35,7 +35,7 @@ class ListingsController < ApplicationController
     if @listing.save
       redirect_to @listing, notice: "Your room was saved as a draft."
     else
-      render :new, status: :unprocessable_content
+      render_invalid :new, @listing
     end
   end
 
@@ -46,7 +46,7 @@ class ListingsController < ApplicationController
     if @listing.update(listing_params)
       redirect_to @listing, notice: "The listing was updated."
     else
-      render :edit, status: :unprocessable_content
+      render_invalid :edit, @listing
     end
   end
 
