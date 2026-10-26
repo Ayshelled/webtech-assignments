@@ -20,12 +20,12 @@
   </p>
   <%= render "listings/host_actions", listing: @listing %>
 
-  <%# Photo gallery: the first photo large, the rest as a strip %>
+  <%# Photo gallery: the first photo large, the rest as a strip of thumbnails (resized variants) %>
   <% if photos.any? %>
     <div class="row g-2 mb-4 gallery">
       <div class="<%= photos.size > 1 ? "col-lg-8" : "col-12" %>">
         <figure class="mb-0">
-          <%= image_tag photos.first.image_url, alt: photos.first.alt_text, class: "gallery-main" %>
+          <%= image_tag photos.first.source(:large), alt: photos.first.alt_text, class: "gallery-main" %>
           <% if photos.first.caption.present? %><figcaption class="small text-secondary mt-1"><%= photos.first.caption %></figcaption><% end %>
         </figure>
       </div>
@@ -33,7 +33,7 @@
         <div class="col-lg-4 d-flex flex-column gap-2">
           <% photos.drop(1).each do |photo| %>
             <figure class="mb-0 flex-fill">
-              <%= image_tag photo.image_url, alt: photo.alt_text, class: "gallery-thumb", loading: "lazy" %>
+              <%= image_tag photo.source(:thumb), alt: photo.alt_text, class: "gallery-thumb", loading: "lazy" %>
               <% if photo.caption.present? %><figcaption class="small text-secondary mt-1"><%= photo.caption %></figcaption><% end %>
             </figure>
           <% end %>

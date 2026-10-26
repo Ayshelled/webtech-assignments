@@ -10,7 +10,7 @@ class NeighborhoodsController < ApplicationController
 
   def show
     @listings = Listing.published.in_neighborhood(@neighborhood.id)
-                       .includes(:listing_photos, property: :neighborhood)
+                       .includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood)
                        .newest_first
                        .load
     @properties = @neighborhood.properties.includes(:listings).order(:street_address).load

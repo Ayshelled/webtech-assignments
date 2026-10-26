@@ -6,7 +6,7 @@ module ApplicationPage
   private
 
   def prepare_application_page(application_id)
-    @application = Application.includes(:user, listing: [ :listing_photos, { property: %i[neighborhood user] } ])
+    @application = Application.includes(:user, listing: [ { listing_photos: ListingPhoto::WITH_IMAGE }, { property: %i[neighborhood user] } ])
                               .find(application_id)
     @visits = @application.visits.includes(:review).order(:scheduled_at)
     @visit ||= Visit.new

@@ -71,6 +71,37 @@
                                     placeholder: "Optional: pets, guests, quiet hours, cleaning..." %>
       <%= field_errors(f, :house_rules) %>
     </div>
+
+    <div class="col-12">
+      <%= f.label :new_photos, listing.listing_photos.any?(&:persisted?) ? "Add photographs" : "Photographs", class: "form-label" %>
+      <%= f.file_field :new_photos, multiple: true, accept: ListingPhoto::ACCEPTED_IMAGE_TYPES.join(","),
+                                    class: field_class(f, :photos), aria: { describedby: "photos-help" } %>
+      <div id="photos-help" class="form-text">
+        JPEG, PNG or WebP, up to <%= number_to_human_size(ListingPhoto::MAX_IMAGE_SIZE) %> each and
+        <%= Listing::MAX_PHOTOS %> per listing. You can select several at once; the first one is the cover.
+      </div>
+      <%= field_errors(f, :photos) %>
+    </div>
+
+    <%# Photos already saved: tick the ones to remove when the listing is saved %>
+    <% saved_photos = listing.listing_photos.select(&:persisted?) %>
+    <% if saved_photos.any? %>
+      <fieldset class="col-12">
+        <legend class="form-label">Current photographs</legend>
+        <div class="row g-2">
+          <% saved_photos.each do |photo| %>
+            <div class="col-6 col-md-3">
+              <%= image_tag photo.source(:thumb), alt: photo.alt_text, class: "photo-option rounded", loading: "lazy" %>
+              <div class="form-check mt-1">
+                <%= check_box_tag "listing[remove_photo_ids][]", photo.id, photo.marked_for_destruction?,
+                                  id: "remove_photo_#{photo.id}", class: "form-check-input" %>
+                <%= label_tag "remove_photo_#{photo.id}", "Remove", class: "form-check-label small" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </fieldset>
+    <% end %>
   </div>
 
   <div class="d-flex gap-2 mt-4">

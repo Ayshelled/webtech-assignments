@@ -7,6 +7,8 @@ Rails 8.1 · PostgreSQL · Bootstrap 5 (through `cssbundling-rails`).
 - Ruby **3.4.5** (see `.ruby-version`; use rbenv, asdf, mise or RubyInstaller)
 - PostgreSQL 14 or newer, running locally
 - Node.js and Yarn (to build the Bootstrap stylesheet)
+- **libvips**, which Active Storage uses to resize listing photographs (`brew install vips` on macOS,
+  `sudo apt install libvips` on Ubuntu/WSL)
 
 > **Windows:** we recommend running the project inside WSL 2 (Ubuntu). `bin/dev` relies on `foreman`, which does not run reliably on native Windows.
 
@@ -54,9 +56,19 @@ Open <http://localhost:3000>.
 
 ## Listing photographs
 
-Listing photographs are uploaded through Active Storage. Each uploaded image must be a JPEG,
-PNG, or WebP file no larger than **10 MB**. In development, uploaded files are stored on disk
-under `storage/` (see `config/storage.yml`).
+Hosts upload a listing's photographs from the listing form (several at once), and can remove
+them when editing it. They are stored with Active Storage; in development, on disk under
+`storage/` (see `config/storage.yml`). The Active Storage tables come with the migrations, so
+`bin/rails db:migrate` is the only setup step (no `active_storage:install` needed).
+
+- **Upload limit: 10 MB per photograph.** Only JPEG, PNG and WebP images are accepted, and a
+  listing has at most 10 photographs. Both rules are validated in the models
+  (`ListingPhoto` and `Listing`); the file field's `accept` attribute is only a convenience.
+- **Variants:** the listing cards use a 600×400 `:card` variant and the gallery thumbnails a
+  400×300 `:thumb` variant, so a card never downloads the full-resolution file. Only the main
+  photo of the listing page uses the larger `:large` variant (at most 1600×1200).
+- The seed photographs from Assignment 2 still point to external URLs (`image_url`); they are
+  shown as they are, while uploaded photographs go through the variants above.
 
 ## Tests
 

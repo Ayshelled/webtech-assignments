@@ -2,7 +2,7 @@ class PagesController < ApplicationController
   def home
     @neighborhoods = Neighborhood.alphabetical
     @featured_listings = Listing.published
-                                .includes(:listing_photos, property: :neighborhood)
+                                .includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood)
                                 .newest_first
                                 .limit(3)
   end
