@@ -52,6 +52,12 @@ bin/dev
 `bin/dev` starts the Rails server and the Bootstrap/Sass watcher together (see `Procfile.dev`).
 Open <http://localhost:3000>.
 
+## Listing photographs
+
+Listing photographs are uploaded through Active Storage. Each uploaded image must be a JPEG,
+PNG, or WebP file no larger than **10 MB**. In development, uploaded files are stored on disk
+under `storage/` (see `config/storage.yml`).
+
 ## Tests
 
 ```bash

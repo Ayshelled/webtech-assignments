@@ -40,6 +40,7 @@ instructions to install dependencies, create and seed the database, and start th
 ```bash
 cd roomies
 bundle install && yarn install
+bin/rails active_storage:install
 bin/rails db:create db:migrate db:seed
 bin/dev            # http://localhost:3000
 ```
