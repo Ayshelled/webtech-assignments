@@ -70,6 +70,17 @@ them when editing it. They are stored with Active Storage; in development, on di
 - The seed photographs from Assignment 2 still point to external URLs (`image_url`); they are
   shown as they are, while uploaded photographs go through the variants above.
 
+## Rich text (description and house rules)
+
+A listing's description and house rules are written with Action Text: the listing form shows
+a Trix editor with bold, italics, lists and links, and the listing page renders the formatted
+HTML. The text is stored in `action_text_rich_texts`; the migration
+`MoveListingTextsToActionText` copies the plain text of existing listings there (one paragraph
+per `<p>`) and removes the old `listings.description` and `listings.house_rules` columns.
+Trix's JavaScript is served by the `actiontext` gem through the import map, so there is nothing
+to install: `bin/rails db:migrate` is the only step. File attachments are turned off in the
+editor because photographs belong in the listing's photo field.
+
 ## Tests
 
 ```bash

@@ -11,7 +11,7 @@
 
 puts "Cleaning the database..."
 ActiveRecord::Base.transaction do
-  [ Report, SavedListing, Review, Visit, Application, ListingPhoto, Listing,
+  [ ActionText::RichText, Report, SavedListing, Review, Visit, Application, ListingPhoto, Listing,
     PropertyAmenity, Property, Amenity, Neighborhood, User ].each(&:delete_all)
 end
 
@@ -112,7 +112,24 @@ ActiveRecord::Base.transaction do
   puts "Creating listings..."
   # Listings that receive applications are created as published (applications require it)
   # and moved to their final state afterwards, as would happen in the real lifecycle.
+  # Description and house rules are rich text (Action Text). Plain seed text becomes HTML:
+  # blank-line separated paragraphs, and house rules with one rule per line become a list.
+  # Texts that are already HTML (they start with "<") are kept as written.
+  to_rich = ->(text, list: false) {
+    next text if text.nil? || text.start_with?("<")
+
+    escape = ->(line) { ERB::Util.html_escape(line) }
+    lines = text.split("\n").map(&:strip).reject(&:empty?)
+    if list && lines.size > 1
+      "<ul>#{lines.map { |line| "<li>#{escape.call(line)}</li>" }.join}</ul>"
+    else
+      text.split(/\n{2,}/).map { |paragraph| "<p>#{escape.call(paragraph.strip)}</p>" }.join
+    end
+  }
+
   new_listing = ->(property, attrs, photos: [], created: 0) {
+    attrs = attrs.merge(description: to_rich.call(attrs[:description]),
+                        house_rules: to_rich.call(attrs[:house_rules], list: true))
     listing = property.listings.create!(attrs.merge(created_at: at.call(-created, 10), updated_at: at.call(-created, 10)))
     photos.each_with_index do |(key, alt, caption), position|
       listing.listing_photos.create!(image_url: photo_url.call(photos_by_key.fetch(key)), alt_text: alt, caption: caption, position: position)
@@ -124,8 +141,12 @@ ActiveRecord::Base.transaction do
     title: "Sunny room near Metro Pedro de Valdivia", status: :published,
     monthly_rent: 420_000, deposit: 420_000, available_from: today + 12, minimum_stay_months: 6,
     furnished: true, private_bathroom: false,
-    description: "Bright double room on the 12th floor with a large window facing the Andes. It comes with a queen bed, a desk and a built-in wardrobe.\n\nYou'll share the apartment with two young professionals. Metro Pedro de Valdivia is a five-minute walk away, with supermarkets and cafés on the same block.",
-    house_rules: "No smoking inside the apartment.\nQuiet hours from 23:00 to 08:00.\nCleaning of shared spaces rotates weekly."
+    description: "<p><strong>Bright double room on the 12th floor</strong> with a large window facing the Andes. It comes with:</p>" \
+                 "<ul><li>a queen bed</li><li>a desk</li><li>a built-in wardrobe</li></ul>" \
+                 "<p>You'll share the apartment with <em>two young professionals</em>. " \
+                 "<a href=\"https://www.metro.cl/\">Metro</a> Pedro de Valdivia is a five-minute walk away, with supermarkets and cafés on the same block.</p>",
+    house_rules: "<ol><li><strong>No smoking</strong> inside the apartment.</li><li>Quiet hours from 23:00 to 08:00.</li>" \
+                 "<li>Cleaning of shared spaces rotates <em>weekly</em>.</li></ol>"
   }, photos: [ [ :bright_bedroom, "Bright bedroom with a large window and a potted plant", "The room in the afternoon" ],
                [ :open_living, "Shared living room and kitchen with a sofa and a dining table", "Shared living room and kitchen" ] ],
      created: 20)

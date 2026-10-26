@@ -60,15 +60,19 @@
 
     <div class="col-12">
       <%= f.label :description, class: "form-label" %>
-      <%= f.text_area :description, rows: 6, class: field_class(f, :description), required: true,
-                                    placeholder: "The room, the light, the house and the people who live there." %>
+      <%# Rich text editor (Trix): bold, italics, lists and links. It can't use the HTML5
+          required attribute, so the model's presence validation is what checks it %>
+      <%= f.rich_text_area :description, class: field_class(f, :description, base: "form-control rich-text"),
+                                         aria: { describedby: "description-help" },
+                                         placeholder: "The room, the light, the house and the people who live there." %>
+      <div id="description-help" class="form-text">Use the toolbar for bold, italics, lists and links.</div>
       <%= field_errors(f, :description) %>
     </div>
 
     <div class="col-12">
       <%= f.label :house_rules, class: "form-label" %>
-      <%= f.text_area :house_rules, rows: 4, class: field_class(f, :house_rules),
-                                    placeholder: "Optional: pets, guests, quiet hours, cleaning..." %>
+      <%= f.rich_text_area :house_rules, class: field_class(f, :house_rules, base: "form-control rich-text"),
+                                         placeholder: "Optional: pets, guests, quiet hours, cleaning..." %>
       <%= field_errors(f, :house_rules) %>
     </div>
 

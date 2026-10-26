@@ -46,13 +46,13 @@
     <div class="col-lg-8">
       <section class="mb-4" aria-labelledby="about-title">
         <h2 id="about-title" class="h4">About this room</h2>
-        <%= simple_format(@listing.description, class: "text-body") %>
+        <div class="text-body"><%= @listing.description %></div>
       </section>
 
       <% if @listing.house_rules.present? %>
         <section class="mb-4" aria-labelledby="rules-title">
           <h2 id="rules-title" class="h4">House rules</h2>
-          <%= simple_format(@listing.house_rules, class: "text-body") %>
+          <div class="text-body"><%= @listing.house_rules %></div>
         </section>
       <% end %>
 

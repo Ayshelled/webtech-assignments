@@ -86,3 +86,11 @@ a:hover { color: var(--accent-dark); }
 @media (max-width: 991.98px) {
   .price-panel { position: static; }
 }
+
+// Rich text (Action Text / Trix). Trix's own styles are in actiontext.css
+trix-editor.rich-text { min-height: 9rem; height: auto; }
+trix-editor.rich-text.is-invalid { border-color: var(--bs-form-invalid-border-color); }
+trix-toolbar .trix-button-group--file-tools { display: none; } // photos go in the photo field
+.trix-content { line-height: 1.6; }
+.trix-content ul, .trix-content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+.trix-content a { color: var(--bs-link-color); }

@@ -13,6 +13,11 @@ class Listing < ApplicationRecord
   has_many :saved_listings, dependent: :destroy
   has_many :reports, dependent: :destroy
 
+  # Rich text (Action Text): the host writes them with bold, italics, lists and links.
+  # They live in action_text_rich_texts, not in columns of listings.
+  has_rich_text :description
+  has_rich_text :house_rules
+
   # Lifecycle: draft -> published -> reserved -> rented; withdrawn from draft or published.
   # The enum also gives the scopes Listing.published, Listing.draft, etc.
   enum :status, {

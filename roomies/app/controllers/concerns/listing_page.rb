@@ -6,7 +6,8 @@ module ListingPage
   private
 
   def prepare_listing_page(listing_id)
-    @listing  = Listing.includes(listing_photos: ListingPhoto::WITH_IMAGE).find(listing_id)
+    @listing  = Listing.includes(:rich_text_description, :rich_text_house_rules, listing_photos: ListingPhoto::WITH_IMAGE)
+                       .find(listing_id)
     @property = Property.includes(:neighborhood, :user, :amenities).find(@listing.property_id)
     @amenities, @shared_spaces = @property.amenities.sort_by(&:name).partition(&:amenity?)
     @reviews = @property.reviews.includes(visit: { application: :user }).newest_first

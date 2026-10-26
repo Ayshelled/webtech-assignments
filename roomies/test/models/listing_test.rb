@@ -27,6 +27,21 @@ class ListingTest < ActiveSupport::TestCase
     assert_match "can't be more than #{Listing::MAX_PHOTOS}", listing.errors[:photos].join
   end
 
+  test "description and house rules keep their rich text formatting" do
+    listing = Listing.new(description: "<p><strong>Bright</strong> room</p>",
+                          house_rules: "<ul><li>No smoking</li></ul>")
+
+    assert_includes listing.description.body.to_html, "<strong>Bright</strong>"
+    assert_includes listing.house_rules.body.to_html, "<li>No smoking</li>"
+  end
+
+  test "a description with no text is blank" do
+    listing = Listing.new(description: "<p><br></p>")
+
+    assert_not listing.valid?
+    assert_includes listing.errors[:description], "can't be blank"
+  end
+
   private
 
   def upload(name, content_type)
