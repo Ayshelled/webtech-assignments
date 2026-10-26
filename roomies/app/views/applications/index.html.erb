@@ -3,55 +3,50 @@
 <section class="page-header">
   <div class="container">
     <p class="section-label mb-2">Applications</p>
-    <h1 class="h2 mb-1">Applications to rooms</h1>
-    <p class="text-secondary mb-3">Seekers' applications and where each one stands in its lifecycle.</p>
+    <h1 class="h2 mb-1"><%= @box == "sent" ? "Applications you sent" : "Your application inbox" %></h1>
+    <p class="text-secondary mb-3">
+      <%= @box == "sent" ? "The rooms you applied to and where each application stands." :
+                           "Applications to your rooms. Shortlist, accept or reject them right here." %>
+    </p>
 
-    <nav aria-label="Filter by status">
-      <ul class="nav nav-pills gap-1 flex-wrap">
-        <li class="nav-item">
-          <%= link_to applications_path, class: class_names("nav-link", active: @status.nil?) do %>
-            All <span class="badge text-bg-light ms-1"><%= @status_counts.values.sum %></span>
-          <% end %>
-        </li>
-        <% Application.statuses.each_key do |status| %>
-          <li class="nav-item">
-            <%= link_to applications_path(status: status), class: class_names("nav-link", active: @status == status) do %>
-              <%= status.humanize %> <span class="badge text-bg-light ms-1"><%= @status_counts.fetch(status, 0) %></span>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </nav>
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <%= link_to "Received", applications_path, class: class_names("nav-link", active: @box == "received"),
+                                                   aria: { current: ("page" if @box == "received") } %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Sent", applications_path(box: "sent"), class: class_names("nav-link", active: @box == "sent"),
+                                                             aria: { current: ("page" if @box == "sent") } %>
+      </li>
+    </ul>
+
+    <% if current_user %>
+      <%= render "applications/inbox_summary", box: @box, status: @status, status_counts: @status_counts %>
+    <% end %>
   </div>
 </section>
 
 <section class="container py-5">
-  <% if @applications.any? %>
+  <% if current_user.nil? %>
+    <%= render "shared/empty_state", message: "Choose who you are acting as in the navigation bar to see your applications.",
+                                     icon: "person-circle" %>
+  <% elsif @applications.any? %>
     <div class="table-responsive detail-panel">
       <table class="table table-hover align-middle mb-0">
         <thead>
           <tr>
-            <th scope="col">Seeker</th>
+            <th scope="col"><%= @box == "received" ? "Seeker" : "Application" %></th>
             <th scope="col">Room</th>
-            <th scope="col">Neighborhood</th>
             <th scope="col">Move-in</th>
             <th scope="col">Stay</th>
             <th scope="col">Status</th>
             <th scope="col">Sent</th>
+            <th scope="col" class="text-end"><%= @box == "received" ? "Your answer" : "" %></th>
           </tr>
         </thead>
         <tbody>
-          <% @applications.each do |application| %>
-            <tr>
-              <td><%= link_to application.user.full_name, application_path(application), class: "fw-semibold" %></td>
-              <td><%= link_to application.listing.title, listing_path(application.listing), class: "link-secondary" %></td>
-              <td><%= application.listing.property.neighborhood.name %></td>
-              <td class="text-nowrap"><%= short_date(application.desired_move_in_date) %></td>
-              <td class="text-nowrap"><%= pluralize(application.intended_stay_months, "month") %></td>
-              <td><%= status_badge(application.status) %></td>
-              <td class="text-nowrap text-secondary small"><%= short_date(application.created_at.to_date) %></td>
-            </tr>
-          <% end %>
+          <%= render partial: "applications/application_row", collection: @applications, as: :application,
+                     locals: { box: @box, status: @status } %>
         </tbody>
       </table>
     </div>

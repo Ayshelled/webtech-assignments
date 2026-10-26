@@ -1,0 +1,18 @@
+<%# The host's answer to an application: shortlist, accept or reject.
+    Locals: application, extra_params (optional hidden params; the inbox sends inbox: 1
+    so the answer comes back as a Turbo Stream), wrapper_class (optional) %>
+<% extra = local_assigns.fetch(:extra_params, {}) %>
+<% name = application.user.full_name %>
+<div class="d-flex flex-wrap gap-1 <%= local_assigns[:wrapper_class] %>">
+  <% if application.pending? %>
+    <%= button_to "Shortlist", shortlist_application_path(application), method: :patch, params: extra,
+                  class: "btn btn-sm btn-outline-primary", aria: { label: "Shortlist #{name}" } %>
+  <% end %>
+  <%= button_to "Accept", accept_application_path(application), method: :patch, params: extra,
+                class: "btn btn-sm btn-success", aria: { label: "Accept #{name}" },
+                form: { data: { turbo_confirm: "Accept #{name}? Every other pending or shortlisted application " \
+                                               "to #{application.listing.title} will be rejected and the room will be reserved." } } %>
+  <%= button_to "Reject", reject_application_path(application), method: :patch, params: extra,
+                class: "btn btn-sm btn-outline-danger", aria: { label: "Reject #{name}" },
+                form: { data: { turbo_confirm: "Reject #{name}'s application?" } } %>
+</div>

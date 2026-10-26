@@ -1,0 +1,29 @@
+<%# A row of the inbox. Its id (dom_id) is the Turbo Stream target that answering replaces.
+    Locals: application, box ("received" or "sent"), status (the active status filter, or nil) %>
+<tr id="<%= dom_id(application) %>">
+  <td>
+    <% if box == "received" %>
+      <%= link_to application.user.full_name, application_path(application), class: "fw-semibold" %>
+    <% else %>
+      <%= link_to "Your application", application_path(application), class: "fw-semibold" %>
+    <% end %>
+  </td>
+  <td>
+    <%= link_to application.listing.title, listing_path(application.listing), class: "link-secondary" %>
+    <div class="small text-secondary"><%= application.listing.property.neighborhood.name %></div>
+  </td>
+  <td class="text-nowrap"><%= short_date(application.desired_move_in_date) %></td>
+  <td class="text-nowrap"><%= pluralize(application.intended_stay_months, "month") %></td>
+  <td><%= status_badge(application.status) %></td>
+  <td class="text-nowrap text-secondary small"><%= short_date(application.created_at.to_date) %></td>
+  <td class="text-end">
+    <% if box == "received" && application.decidable? %>
+      <%= render "applications/answer_buttons", application: application, wrapper_class: "justify-content-end",
+                                                extra_params: { inbox: 1, status: status }.compact %>
+    <% elsif box == "sent" %>
+      <div class="d-inline-block"><%= render "applications/withdraw_button", application: application %></div>
+    <% elsif application.awaiting_answer? %>
+      <span class="small text-secondary">Room <%= application.listing.status %></span>
+    <% end %>
+  </td>
+</tr>

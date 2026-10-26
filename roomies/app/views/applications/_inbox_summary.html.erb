@@ -1,0 +1,27 @@
+<%# How many applications wait for an answer, and the status filter with a count per status.
+    Answering from the inbox replaces it through a Turbo Stream (target #inbox_summary).
+    Locals: box, status, status_counts %>
+<% waiting = status_counts.fetch("pending", 0) + status_counts.fetch("shortlisted", 0) %>
+<div id="inbox_summary">
+  <p class="mb-3">
+    <span class="badge rounded-pill text-bg-warning fs-6 me-1" id="pending_count"><%= waiting %></span>
+    <%= box == "received" ? "waiting for your answer" : "waiting for the host's answer" %>
+    <span class="text-secondary small">(pending or shortlisted)</span>
+  </p>
+  <nav aria-label="Filter by status">
+    <ul class="nav nav-pills gap-1 flex-wrap">
+      <li class="nav-item">
+        <%= link_to applications_path(box: box), class: class_names("nav-link", active: status.nil?) do %>
+          All <span class="badge text-bg-light ms-1"><%= status_counts.values.sum %></span>
+        <% end %>
+      </li>
+      <% Application.statuses.each_key do |each_status| %>
+        <li class="nav-item">
+          <%= link_to applications_path(box: box, status: each_status), class: class_names("nav-link", active: status == each_status) do %>
+            <%= each_status.humanize %> <span class="badge text-bg-light ms-1"><%= status_counts.fetch(each_status, 0) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+</div>

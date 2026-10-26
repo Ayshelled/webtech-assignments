@@ -21,8 +21,14 @@ Rails.application.routes.draw do
   end
 
   # Hosts propose visits on an application
+  # The seeker withdraws; the host shortlists, rejects or accepts
   resources :applications, only: %i[index show] do
-    patch :withdraw, on: :member
+    member do
+      patch :withdraw
+      patch :shortlist
+      patch :reject
+      patch :accept
+    end
     resources :visits, only: :create
   end
 

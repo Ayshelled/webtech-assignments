@@ -1,0 +1,9 @@
+<%# The host answered from the inbox: replace the rows that changed (on accept, also the
+    applications rejected automatically), the pending count and the flash, without a reload %>
+<% @changed.each do |application| %>
+  <%= turbo_stream.replace application, partial: "applications/application_row",
+                                        locals: { application: application, box: @box, status: @status } %>
+<% end %>
+<%= turbo_stream.replace "inbox_summary", partial: "applications/inbox_summary",
+                                          locals: { box: @box, status: @status, status_counts: @status_counts } %>
+<%= turbo_stream.replace "flash", partial: "shared/flash" %>
