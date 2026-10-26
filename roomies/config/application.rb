@@ -11,6 +11,11 @@ module Roomies
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
+    # Serve uploaded photos and their variants through the app (proxy mode) instead of
+    # redirecting to a signed URL that expires after 5 minutes: browsers cache the redirect
+    # but not the expiry, so a revisited page could show broken photos.
+    config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
