@@ -46,7 +46,7 @@ class NeighborhoodsController < ApplicationController
     if @neighborhood.destroy
       redirect_to neighborhoods_path, notice: "#{@neighborhood.name} was removed from the catalog.", status: :see_other
     else
-      redirect_to @neighborhood, alert: @neighborhood.errors.full_messages.to_sentence, status: :see_other
+      redirect_to @neighborhood, alert: "#{@neighborhood.name} can't be removed because it still has properties.", status: :see_other
     end
   end
 
