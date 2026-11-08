@@ -135,11 +135,26 @@ Every seeded user has the password **`password123`**.
 
 The other seeded users (listed at the top of `db/seeds.rb`) use the same password.
 
+### Notification emails (Active Job)
+
+Roomies emails each side of an application when something happens to it
+(`NotificationsMailer`):
+
+- **New application → the host:** who applied, to which room, the move-in date, the length of
+  the stay and the message, with a link to answer it.
+- **Answer → the seeker:** when the host shortlists, accepts or rejects the application.
+  Accepting one also emails every seeker whose application was rejected automatically.
+
+They are sent with `deliver_later`, so Active Job delivers them in the background and the page
+doesn't wait for the email (the `:async` adapter in development, Solid Queue in production).
+Their design can be previewed at <http://localhost:3000/rails/mailers/notifications_mailer>.
+
 ### Emails in development
 
 In development no email leaves your computer: they are delivered by `letter_opener_web` and
 listed at <http://localhost:3000/letter_opener>. To try the password reset, choose *Forgot your
-password?* on the log in page, then open the email there and follow its link. Emails are sent in
+password?* on the log in page, then open the email there and follow its link. To see a
+notification, apply to a room as a seeker, or answer an application as its host. Emails are sent in
 the background with Active Job (`deliver_later`).
 
 ## Tests

@@ -1,0 +1,22 @@
+<p>Hi <%= @application.user.full_name %>,</p>
+
+<% case @application.status %>
+<% when "shortlisted" %>
+  <p>
+    Good news: the host of <strong><%= @listing.title %></strong> shortlisted your application.
+    They will propose a visit soon, so keep an eye on your application.
+  </p>
+<% when "accepted" %>
+  <p>
+    Congratulations! Your application for <strong><%= @listing.title %></strong> was
+    <strong>accepted</strong>. The room is now reserved for you: get in touch with the host to
+    arrange your move-in on <%= l(@application.desired_move_in_date, format: :long) %>.
+  </p>
+<% when "rejected" %>
+  <p>
+    The host of <strong><%= @listing.title %></strong> chose another applicant this time.
+    Thank you for applying. There are more rooms waiting for you on Roomies.
+  </p>
+<% end %>
+
+<p><%= link_to "See your application", application_url(@application) %></p>

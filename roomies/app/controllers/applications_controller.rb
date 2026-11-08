@@ -31,6 +31,8 @@ class ApplicationsController < ApplicationController
     @application.user = current_user
 
     if @application.save
+      # Email the host in the background (Active Job)
+      NotificationsMailer.with(application: @application).new_application.deliver_later
       notice = "Your application was sent to the host."
       if turbo_frame_request?
         # Only the apply block changes: the form is replaced by the confirmation and the state
@@ -90,6 +92,8 @@ class ApplicationsController < ApplicationController
     result = @application.public_send(decision)
     # accept! also returns the applications it rejected: their rows change too
     @changed = [ @application, *(result if result.is_a?(Array)) ]
+    # Email every seeker whose application changed, in the background (Active Job)
+    @changed.each { |application| NotificationsMailer.with(application: application).application_answered.deliver_later }
     respond_to_answer(notice: notice)
   rescue ActiveRecord::RecordInvalid => e
     message = e.record.errors.full_messages.to_sentence

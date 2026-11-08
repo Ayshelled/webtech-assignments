@@ -1,0 +1,12 @@
+Hi <%= @host.full_name %>,
+
+<%= @application.user.full_name %> applied to <%= @listing.title %>.
+
+- Wants to move in on <%= l(@application.desired_move_in_date, format: :long) %>
+- Plans to stay <%= pluralize(@application.intended_stay_months, "month") %>
+
+Their message:
+<%= @application.message %>
+
+Review the application to shortlist, accept or reject it:
+<%= application_url(@application) %>

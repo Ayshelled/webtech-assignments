@@ -1,0 +1,21 @@
+<p>Hi <%= @host.full_name %>,</p>
+
+<p>
+  <strong><%= @application.user.full_name %></strong> applied to
+  <strong><%= @listing.title %></strong>.
+</p>
+
+<ul>
+  <li>Wants to move in on <%= l(@application.desired_move_in_date, format: :long) %></li>
+  <li>Plans to stay <%= pluralize(@application.intended_stay_months, "month") %></li>
+</ul>
+
+<p>Their message:</p>
+<blockquote style="border-left: 3px solid #d9e1e8; margin: 0; padding-left: 12px; color: #475569;">
+  <%= simple_format(@application.message) %>
+</blockquote>
+
+<p>
+  <%= link_to "Review the application", application_url(@application) %>
+  to shortlist, accept or reject it.
+</p>
