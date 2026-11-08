@@ -1,4 +1,7 @@
 class NeighborhoodsController < ApplicationController
+  # Public part of Roomies: visitors can browse without an account
+  allow_unauthenticated_access only: %i[index show]
+
   before_action :set_neighborhood, only: %i[show edit update destroy]
 
   def index

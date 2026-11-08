@@ -2,10 +2,9 @@ class ApplicationsController < ApplicationController
   include ListingPage
   include ApplicationPage
 
-  before_action :require_acting_user, only: %i[create withdraw shortlist reject accept]
   before_action :set_received_application, only: %i[shortlist reject accept]
 
-  # The acting user's inbox: the applications received for their rooms (as host), or
+  # The signed-in user's inbox: the applications received for their rooms (as host), or
   # the ones they sent (as seeker), filtered by status
   def index
     @box = params[:box] == "sent" ? "sent" : "received"

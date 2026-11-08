@@ -1,0 +1,57 @@
+<% content_for :title, "Create an account" %>
+
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-6">
+      <div class="detail-panel p-4 p-lg-5">
+        <h1 class="h3 mb-1">Create your account</h1>
+        <p class="text-secondary mb-4">With one account you can look for a room and publish yours.</p>
+
+        <%= form_with model: @user, url: sign_up_path do |f| %>
+          <div class="mb-3">
+            <%= f.label :full_name, "Full name", class: "form-label" %>
+            <%= f.text_field :full_name, class: field_class(f, :full_name), required: true, maxlength: 120,
+                                         autocomplete: "name", placeholder: "e.g. Javiera Carrasco" %>
+            <%= field_errors(f, :full_name) %>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-7">
+              <%= f.label :email_address, "Email address", class: "form-label" %>
+              <%= f.email_field :email_address, class: field_class(f, :email_address), required: true, maxlength: 255,
+                                                autocomplete: "email", placeholder: "you@example.com" %>
+              <%= field_errors(f, :email_address) %>
+            </div>
+            <div class="col-md-5">
+              <%= f.label :phone, "Phone (optional)", class: "form-label" %>
+              <%= f.telephone_field :phone, class: field_class(f, :phone), maxlength: 30,
+                                            autocomplete: "tel", placeholder: "+56 9 1234 5678" %>
+              <%= field_errors(f, :phone) %>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <%= f.label :password, class: "form-label" %>
+              <%= f.password_field :password, class: field_class(f, :password), required: true, minlength: 8, maxlength: 72,
+                                               autocomplete: "new-password", placeholder: "At least 8 characters" %>
+              <%= field_errors(f, :password) %>
+            </div>
+            <div class="col-md-6">
+              <%= f.label :password_confirmation, "Repeat the password", class: "form-label" %>
+              <%= f.password_field :password_confirmation, class: field_class(f, :password_confirmation), required: true,
+                                                           maxlength: 72, autocomplete: "new-password" %>
+              <%= field_errors(f, :password_confirmation) %>
+            </div>
+          </div>
+
+          <%= f.submit "Create account", class: "btn btn-coral w-100" %>
+        <% end %>
+
+        <p class="small text-secondary text-center mt-4 mb-0">
+          Already have an account? <%= link_to "Log in", new_session_path %>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

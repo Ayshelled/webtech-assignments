@@ -8,9 +8,4 @@
     <%= button_to "Delete property", property_path(property), method: :delete, class: "btn btn-sm btn-outline-danger",
                   form: { data: { turbo_confirm: "Delete this property and all its listings, applications and reviews?" } } %>
   </div>
-<% else %>
-  <p class="small text-secondary mt-3 mb-0">
-    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-    Act as <%= property.user.full_name %> (the host) to add rooms or edit this property.
-  </p>
 <% end %>

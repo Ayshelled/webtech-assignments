@@ -1,0 +1,45 @@
+<% content_for :title, "Edit my profile" %>
+<%= render "shared/form_header", title: "Edit my profile", back_label: "My profile", back_path: profile_path,
+           subtitle: "Hosts see your name and bio when you apply to their rooms." %>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8">
+      <%= form_with model: @user, url: profile_path, method: :patch, class: "detail-panel p-4" do |f| %>
+        <div class="mb-3">
+          <%= f.label :full_name, "Full name", class: "form-label" %>
+          <%= f.text_field :full_name, class: field_class(f, :full_name), required: true, maxlength: 120, autocomplete: "name" %>
+          <%= field_errors(f, :full_name) %>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-7">
+            <%= f.label :email_address, "Email address", class: "form-label" %>
+            <%= f.email_field :email_address, class: field_class(f, :email_address), required: true, maxlength: 255,
+                                              autocomplete: "email" %>
+            <%= field_errors(f, :email_address) %>
+          </div>
+          <div class="col-md-5">
+            <%= f.label :phone, class: "form-label" %>
+            <%= f.telephone_field :phone, class: field_class(f, :phone), maxlength: 30, autocomplete: "tel",
+                                          placeholder: "+56 9 1234 5678" %>
+            <%= field_errors(f, :phone) %>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :bio, "Short bio", class: "form-label" %>
+          <%= f.text_area :bio, rows: 5, class: field_class(f, :bio), maxlength: 500,
+                                placeholder: "What you study or do, your routines, what you look for in a home." %>
+          <%= field_errors(f, :bio) %>
+          <div class="form-text">Up to 500 characters.</div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= f.submit "Save profile", class: "btn btn-coral" %>
+          <%= link_to "Cancel", profile_path, class: "btn btn-outline-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

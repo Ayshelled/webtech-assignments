@@ -1,0 +1,47 @@
+<% content_for :title, "My profile" %>
+
+<section class="page-header">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+    <div>
+      <p class="section-label mb-2">My profile</p>
+      <h1 class="h2 mb-1">
+        <%= @user.full_name %>
+        <% if @user.moderator? %><span class="badge rounded-pill text-bg-dark align-middle fs-6">Moderator</span><% end %>
+      </h1>
+      <p class="text-secondary mb-0">Member since <%= l(@user.created_at.to_date, format: :long) %></p>
+    </div>
+    <%= link_to edit_profile_path, class: "btn btn-coral" do %>
+      <i class="bi bi-pencil me-1" aria-hidden="true"></i>Edit profile
+    <% end %>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="detail-panel p-4 h-100">
+        <h2 class="h5 mb-3">About me</h2>
+        <% if @user.bio.present? %>
+          <%= simple_format(@user.bio, class: "mb-0") %>
+        <% else %>
+          <p class="text-secondary mb-0">
+            You haven't written a bio yet. Hosts read it when you apply:
+            <%= link_to "tell them about yourself", edit_profile_path %>.
+          </p>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="detail-panel p-4 h-100">
+        <h2 class="h5 mb-3">Contact details</h2>
+        <dl class="mb-0">
+          <dt class="small text-secondary">Email</dt>
+          <dd><%= @user.email_address %></dd>
+          <dt class="small text-secondary">Phone</dt>
+          <dd><%= @user.phone.presence || "Not added" %></dd>
+        </dl>
+        <p class="small mb-0"><%= link_to "Change my password", new_password_path(email_address: @user.email_address) %></p>
+      </div>
+    </div>
+  </div>
+</div>

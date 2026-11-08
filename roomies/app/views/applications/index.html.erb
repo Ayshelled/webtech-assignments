@@ -28,7 +28,7 @@
 
 <section class="container py-5">
   <% if current_user.nil? %>
-    <%= render "shared/empty_state", message: "Choose who you are acting as in the navigation bar to see your applications.",
+    <%= render "shared/empty_state", message: "Log in to see your applications.",
                                      icon: "person-circle" %>
   <% elsif @applications.any? %>
     <div class="table-responsive detail-panel">

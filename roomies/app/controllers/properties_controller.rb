@@ -1,7 +1,9 @@
 class PropertiesController < ApplicationController
+  # Public part of Roomies: visitors can browse without an account
+  allow_unauthenticated_access only: %i[index show]
+
   include PropertyPage
 
-  before_action :require_acting_user, only: %i[new create]
   before_action :set_property, only: %i[edit update destroy]
   before_action :load_form_options, only: %i[new create edit update]
 
@@ -19,7 +21,7 @@ class PropertiesController < ApplicationController
     @property = Property.new
   end
 
-  # The acting user becomes the host of the property
+  # The signed-in user becomes the host of the property
   def create
     @property = current_user.properties.new(property_params)
 

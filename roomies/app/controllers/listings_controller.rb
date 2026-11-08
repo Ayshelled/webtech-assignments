@@ -1,4 +1,7 @@
 class ListingsController < ApplicationController
+  # Public part of Roomies: visitors can browse without an account
+  allow_unauthenticated_access only: %i[index show]
+
   include ListingPage
 
   before_action :set_property, only: %i[new create]

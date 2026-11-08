@@ -1,0 +1,34 @@
+<% content_for :title, "Log in" %>
+
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+      <div class="detail-panel p-4 p-lg-5">
+        <h1 class="h3 mb-1">Welcome back</h1>
+        <p class="text-secondary mb-4">Log in to apply to rooms, publish yours and answer applications.</p>
+
+        <%= form_with url: session_path do |form| %>
+          <div class="mb-3">
+            <%= form.label :email_address, "Email address", class: "form-label" %>
+            <%= form.email_field :email_address, class: "form-control", required: true, autofocus: true,
+                                 autocomplete: "username", placeholder: "you@example.com", value: params[:email_address] %>
+          </div>
+
+          <div class="mb-2">
+            <%= form.label :password, class: "form-label" %>
+            <%= form.password_field :password, class: "form-control", required: true,
+                                    autocomplete: "current-password", placeholder: "Your password", maxlength: 72 %>
+          </div>
+
+          <p class="small text-end mb-4"><%= link_to "Forgot your password?", new_password_path %></p>
+
+          <%= form.submit "Log in", class: "btn btn-coral w-100" %>
+        <% end %>
+
+        <p class="small text-secondary text-center mt-4 mb-0">
+          New to Roomies? <%= link_to "Create an account", sign_up_path %>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

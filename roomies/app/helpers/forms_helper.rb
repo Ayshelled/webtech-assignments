@@ -17,7 +17,4 @@ module FormsHelper
     { "notice" => "success", "alert" => "danger" }.fetch(type.to_s, "info")
   end
 
-  def acting_user_options
-    options_from_collection_for_select(User.order(:full_name), :id, :full_name, current_user&.id)
-  end
 end

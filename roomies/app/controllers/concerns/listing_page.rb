@@ -14,7 +14,7 @@ module ListingPage
     @other_listings = @property.listings.published.where.not(id: @listing.id)
                                .includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood)
 
-    # The apply block: the acting user's application to this room, or a new one for the form
+    # The apply block: the signed-in user's application to this room, or a new one for the form
     @my_application = current_user && @listing.applications.find_by(user: current_user)
     @application ||= Application.new
   end

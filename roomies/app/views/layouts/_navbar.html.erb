@@ -10,23 +10,35 @@
         <ul class="navbar-nav ms-auto align-items-xl-center gap-xl-3">
           <li class="nav-item"><%= nav_link "Search rooms", listings_path, "listings" %></li>
           <li class="nav-item"><%= nav_link "Neighborhoods", neighborhoods_path, "neighborhoods" %></li>
-          <li class="nav-item"><%= nav_link "Amenities", amenities_path, "amenities" %></li>
+          <% if authenticated? %>
+            <li class="nav-item"><%= nav_link "Amenities", amenities_path, "amenities" %></li>
+          <% end %>
           <li class="nav-item"><%= nav_link "Properties", properties_path, "properties" %></li>
-          <li class="nav-item"><%= nav_link "Applications", applications_path, "applications" %></li>
+          <% if authenticated? %>
+            <li class="nav-item"><%= nav_link "Applications", applications_path, "applications" %></li>
+          <% end %>
           <li class="nav-item"><%= link_to "How it works", root_path(anchor: "how-it-works"), class: "nav-link" %></li>
-          <li class="nav-item">
-            <%= link_to "Publish a room", new_property_path, class: "btn btn-coral px-3" %>
-          </li>
-          <%# No accounts until Assignment 4: choose which user you are acting as %>
-          <li class="nav-item">
-            <%= form_with url: acting_user_path, method: :patch, class: "d-flex align-items-center gap-2",
-                          data: { controller: "autosubmit" } do |f| %>
-              <%= f.label :user_id, "Acting as", class: "small text-secondary text-nowrap mb-0" %>
-              <%= f.select :user_id, acting_user_options, { include_blank: "Visitor" },
-                           class: "form-select form-select-sm", style: "min-width: 13rem;", data: { action: "change->autosubmit#submit" } %>
-              <%= f.submit "Switch", class: "btn btn-sm btn-outline-secondary visually-hidden-focusable" %>
-            <% end %>
-          </li>
+          <% if authenticated? %>
+            <li class="nav-item">
+              <%= link_to "Publish a room", new_property_path, class: "btn btn-coral px-3" %>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle me-1" aria-hidden="true"></i><%= current_user.full_name %>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><%= link_to "My profile", profile_path, class: "dropdown-item" %></li>
+                <li><%= link_to "My applications", applications_path, class: "dropdown-item" %></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><%= button_to "Sign out", session_path, method: :delete, class: "dropdown-item" %></li>
+              </ul>
+            </li>
+          <% else %>
+            <li class="nav-item"><%= nav_link "Log in", new_session_path, "sessions" %></li>
+            <li class="nav-item">
+              <%= link_to "Sign up", sign_up_path, class: "btn btn-coral px-3" %>
+            </li>
+          <% end %>
         </ul>
       </div>
     </div>

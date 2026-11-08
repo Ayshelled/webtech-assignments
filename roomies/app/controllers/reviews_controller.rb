@@ -1,14 +1,13 @@
 class ReviewsController < ApplicationController
   include PropertyPage
 
-  before_action :require_acting_user
   before_action :set_review, only: %i[edit update destroy]
 
-  # Written from the property page, about one of the acting user's completed visits
+  # Written from the property page, about one of the signed-in user's completed visits
   def create
     @property = Property.find(params.expect(:property_id))
     @review = Review.new(review_params.except(:visit_id))
-    # Only a visit of the acting user to this property can be reviewed: anything else
+    # Only a visit of the signed-in user to this property can be reviewed: anything else
     # leaves the review without a visit, and its validations reject it
     @review.visit = reviewable_visits(@property).find_by(id: review_params[:visit_id])
 

@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Authentication
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -9,12 +11,9 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # There are no accounts until Assignment 4: the select in the navigation bar
-  # chooses which user you are acting as, and that user authors every action.
+  # The signed-in user, or nil for a visitor. Pundit uses this method too.
   def current_user
-    return @current_user if defined?(@current_user)
-
-    @current_user = User.find_by(id: session[:acting_user_id])
+    resume_session&.user
   end
 
   # A form that couldn't be saved: render it again with each error next to its
@@ -22,12 +21,5 @@ class ApplicationController < ActionController::Base
   def render_invalid(template, record)
     flash.now[:alert] = "Couldn't save the #{record.model_name.human.downcase}: #{record.errors.full_messages.to_sentence}."
     render template, status: :unprocessable_content
-  end
-
-  def require_acting_user
-    return if current_user
-
-    redirect_back fallback_location: root_path,
-                  alert: "Choose who you are acting as in the navigation bar first."
   end
 end

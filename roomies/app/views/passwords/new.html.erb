@@ -1,0 +1,24 @@
+<% content_for :title, "Forgot your password?" %>
+
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+      <div class="detail-panel p-4 p-lg-5">
+        <h1 class="h3 mb-1">Forgot your password?</h1>
+        <p class="text-secondary mb-4">Enter the email of your account and we will send you a link to choose a new one.</p>
+
+        <%= form_with url: passwords_path do |form| %>
+          <div class="mb-4">
+            <%= form.label :email_address, "Email address", class: "form-label" %>
+            <%= form.email_field :email_address, class: "form-control", required: true, autofocus: true,
+                                 autocomplete: "username", placeholder: "you@example.com", value: params[:email_address] %>
+          </div>
+
+          <%= form.submit "Email reset instructions", class: "btn btn-coral w-100" %>
+        <% end %>
+
+        <p class="small text-secondary text-center mt-4 mb-0"><%= link_to "Back to log in", new_session_path %></p>
+      </div>
+    </div>
+  </div>
+</section>

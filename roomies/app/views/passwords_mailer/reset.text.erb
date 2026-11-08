@@ -1,0 +1,7 @@
+Hi <%= @user.full_name %>,
+
+Someone asked to reset the password of your Roomies account. You can choose a new one on
+<%= edit_password_url(@user.password_reset_token) %>
+
+This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+If you didn't ask for it, you can ignore this email: your password stays the same.

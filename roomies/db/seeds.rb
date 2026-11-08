@@ -12,7 +12,7 @@
 puts "Cleaning the database..."
 ActiveRecord::Base.transaction do
   [ ActionText::RichText, Report, SavedListing, Review, Visit, Application, ListingPhoto, Listing,
-    PropertyAmenity, Property, Amenity, Neighborhood, User ].each(&:delete_all)
+    PropertyAmenity, Property, Amenity, Neighborhood, Session, User ].each(&:delete_all)
 end
 
 today = Date.current
@@ -67,6 +67,11 @@ ActiveRecord::Base.transaction do
   emma      = new_user.call("Emma Schneider",    "emma.schneider@example.com",    "+49 151 2345 6789")
   paula     = new_user.call("Paula Vergara",     "paula.vergara@example.com",     "+56 9 6456 1122")
   sebastian = new_user.call("Sebastián Rivas",   "sebastian.rivas@example.com",   "+56 9 5567 2233")
+
+  # Short bios for the profile page (Assignment 4)
+  camila.update!(bio: "Architect, I live in the apartment and rent its two other rooms. I love plants and quiet evenings.")
+  catalina.update!(bio: "Second-year engineering student at UC. Tidy, early riser, and happy to share the cooking.")
+  benjamin.update!(bio: "Junior developer working remotely three days a week. I play guitar, with headphones!")
 
   # ------------------------------------------------------------------
   # Catalogs managed by moderators: neighborhoods and amenities

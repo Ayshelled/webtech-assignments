@@ -15,7 +15,7 @@ module PropertyPage
     @review ||= Review.new
   end
 
-  # Completed visits of the acting user to this property that don't have a review yet
+  # Completed visits of the signed-in user to this property that don't have a review yet
   def reviewable_visits(property)
     return Visit.none unless current_user
 

@@ -1,0 +1,28 @@
+<% content_for :title, "Choose a new password" %>
+
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+      <div class="detail-panel p-4 p-lg-5">
+        <h1 class="h3 mb-1">Choose a new password</h1>
+        <p class="text-secondary mb-4">At least 8 characters. You will log in with it from now on.</p>
+
+        <%= form_with url: password_path(params[:token]), method: :put do |form| %>
+          <div class="mb-3">
+            <%= form.label :password, "New password", class: "form-label" %>
+            <%= form.password_field :password, class: "form-control", required: true, minlength: 8, maxlength: 72,
+                                    autocomplete: "new-password", placeholder: "At least 8 characters" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :password_confirmation, "Repeat the new password", class: "form-label" %>
+            <%= form.password_field :password_confirmation, class: "form-control", required: true, maxlength: 72,
+                                    autocomplete: "new-password", placeholder: "The same password again" %>
+          </div>
+
+          <%= form.submit "Save new password", class: "btn btn-coral w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
