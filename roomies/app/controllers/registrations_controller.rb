@@ -2,6 +2,8 @@
 # (role is not a permitted parameter) and starts signed in.
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access
+  # No record to authorize: signing in, signing up and the landing page are open to everyone
+  skip_after_action :verify_authorized
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to sign_up_path, alert: "Try again later." }
 
   def new

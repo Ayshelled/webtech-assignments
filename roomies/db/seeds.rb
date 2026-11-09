@@ -173,6 +173,14 @@ ActiveRecord::Base.transaction do
     description: "Small and quiet single room facing the building's inner courtyard. Still preparing photos and details."
   }, created: 3)
 
+  # A draft of another host: Camila must not see it (nor Matías hers); a moderator sees both
+  new_listing.call(nunoa_house, {
+    title: "Small room by the kitchen (draft)", status: :draft,
+    monthly_rent: 280_000, deposit: 280_000, available_from: today + 30, minimum_stay_months: 6,
+    furnished: true, private_bathroom: false,
+    description: "Single room next to the kitchen. Matías is still deciding the rent."
+  }, created: 2)
+
   family_house_room = new_listing.call(nunoa_house, {
     title: "Big room in a family house in Ñuñoa", status: :published,
     monthly_rent: 380_000, deposit: 380_000, available_from: today + 5, minimum_stay_months: 6,

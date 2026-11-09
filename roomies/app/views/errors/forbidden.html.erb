@@ -1,0 +1,28 @@
+<% content_for :title, "Not allowed" %>
+
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="detail-panel p-4 p-md-5 text-center">
+        <i class="bi bi-shield-lock fs-1 d-block mb-3 text-secondary" aria-hidden="true"></i>
+        <p class="section-label mb-2">Error 403 &middot; Not allowed</p>
+        <h1 class="h3 mb-3">You can't do that in Roomies</h1>
+        <p class="mb-4"><%= @reason %></p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+          <% if @signed_in %>
+            <%= link_to "Go back", :back, class: "btn btn-outline-secondary" %>
+          <% else %>
+            <%= link_to "Log in", new_session_path, class: "btn btn-coral" %>
+            <%= link_to "Create an account", sign_up_path, class: "btn btn-outline-secondary" %>
+          <% end %>
+          <%= link_to "Search rooms", listings_path, class: "btn btn-outline-secondary" %>
+        </div>
+
+        <p class="small text-secondary mt-4 mb-0">
+          If you think you should be able to do this, check that you are logged in with the right account.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

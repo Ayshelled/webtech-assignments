@@ -8,8 +8,9 @@ module PropertyPage
   def prepare_property_page(property_id)
     @property = Property.includes(:neighborhood, :user, :amenities).find(property_id)
     @amenities, @shared_spaces = @property.amenities.sort_by(&:name).partition(&:amenity?)
-    @listings = @property.listings.includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood).newest_first
-    @listings = @listings.where.not(status: :draft) unless current_user == @property.user # drafts: host only
+    # Drafts: only the host and moderators see them (ListingPolicy::Scope)
+    @listings = policy_scope(@property.listings)
+                  .includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood).newest_first
     @reviews  = @property.reviews.includes(visit: { application: :user }).newest_first
     @reviewable_visits = reviewable_visits(@property).to_a
     @review ||= Review.new

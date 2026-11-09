@@ -7,8 +7,10 @@
       <h1 class="h2 mb-1">Where do you want to live?</h1>
       <p class="text-secondary mb-0">The neighborhoods hosts can choose from when they register a property.</p>
     </div>
-    <%= link_to new_neighborhood_path, class: "btn btn-coral" do %>
-      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add a neighborhood
+    <% if policy(Neighborhood).create? %>
+      <%= link_to new_neighborhood_path, class: "btn btn-coral" do %>
+        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Add a neighborhood
+      <% end %>
     <% end %>
   </div>
 </section>

@@ -10,8 +10,11 @@
         <ul class="navbar-nav ms-auto align-items-xl-center gap-xl-3">
           <li class="nav-item"><%= nav_link "Search rooms", listings_path, "listings" %></li>
           <li class="nav-item"><%= nav_link "Neighborhoods", neighborhoods_path, "neighborhoods" %></li>
-          <% if authenticated? %>
+          <% if policy(Amenity).index? %>
             <li class="nav-item"><%= nav_link "Amenities", amenities_path, "amenities" %></li>
+          <% end %>
+          <% if policy(Report).index? %>
+            <li class="nav-item"><%= nav_link "Reports", reports_path, "reports" %></li>
           <% end %>
           <li class="nav-item"><%= nav_link "Properties", properties_path, "properties" %></li>
           <% if authenticated? %>
@@ -25,6 +28,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle me-1" aria-hidden="true"></i><%= current_user.full_name %>
+                <% if current_user.moderator? %><span class="badge text-bg-dark ms-1">Moderator</span><% end %>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><%= link_to "My profile", profile_path, class: "dropdown-item" %></li>

@@ -1,0 +1,18 @@
+<%# Report a listing that isn't yours. Shown on the listing page to members and moderators
+    (ListingPolicy#report?); ReportsController asks ReportPolicy again. Locals: listing %>
+<details class="mt-3 small">
+  <summary class="text-secondary">
+    <i class="bi bi-flag me-1" aria-hidden="true"></i>Report this room
+  </summary>
+  <%= form_with model: Report.new, url: listing_reports_path(listing), class: "mt-2", data: { turbo: false } do |f| %>
+    <div class="mb-2">
+      <%= f.label :reason, "What's wrong with it?", class: "form-label" %>
+      <%= f.select :reason, Report.reasons.keys.map { |reason| [ reason.humanize, reason ] }, {}, class: "form-select form-select-sm" %>
+    </div>
+    <div class="mb-2">
+      <%= f.label :details, "Details (optional)", class: "form-label" %>
+      <%= f.text_area :details, rows: 2, maxlength: 1000, class: "form-control form-control-sm" %>
+    </div>
+    <%= f.submit "Send report", class: "btn btn-sm btn-outline-danger" %>
+  <% end %>
+</details>

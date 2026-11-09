@@ -102,6 +102,9 @@
         </dl>
         <hr>
         <%= render "listings/application_frame", listing: @listing, my_application: @my_application, application: @application %>
+        <% if policy(@listing).report? %>
+          <%= render "reports/form", listing: @listing %>
+        <% end %>
       </div>
     </aside>
   </div>

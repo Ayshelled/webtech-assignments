@@ -5,25 +5,31 @@ class PropertiesController < ApplicationController
   include PropertyPage
 
   before_action :set_property, only: %i[edit update destroy]
+  # The host of the property, or a moderator, edits or deletes it (PropertyPolicy)
+  before_action -> { authorize @property }, only: %i[edit update destroy]
   before_action :load_form_options, only: %i[new create edit update]
 
   def index
-    @properties = Property.includes(:neighborhood, :user, :listings)
+    authorize Property
+    @properties = policy_scope(Property).includes(:neighborhood, :user, :listings)
                           .joins(:neighborhood)
                           .order("neighborhoods.name", :street_address)
   end
 
   def show
     prepare_property_page(params.expect(:id))
+    authorize @property
   end
 
   def new
     @property = Property.new
+    authorize @property
   end
 
   # The signed-in user becomes the host of the property
   def create
     @property = current_user.properties.new(property_params)
+    authorize @property
 
     if @property.save
       redirect_to @property, notice: "Your property was registered. Now add the rooms you want to publish."

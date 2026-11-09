@@ -17,11 +17,14 @@
         </div>
         <%= rating_stars(review.rating) %>
         <p class="mb-0 mt-2"><%= review.comment %></p>
-        <% if current_user && review.visit.application.user_id == current_user.id %>
+        <% review_policy = policy(review) %>
+        <% if review_policy.update? || review_policy.destroy? %>
           <div class="d-flex gap-2 mt-3">
-            <%= link_to "Edit", edit_review_path(review), class: "btn btn-sm btn-outline-secondary" %>
+            <% if review_policy.update? %>
+              <%= link_to "Edit", edit_review_path(review), class: "btn btn-sm btn-outline-secondary" %>
+            <% end %>
             <%= button_to "Delete", review_path(review), method: :delete, class: "btn btn-sm btn-outline-danger",
-                          form: { data: { turbo_confirm: "Delete your review?" } } %>
+                          form: { data: { turbo_confirm: review_policy.update? ? "Delete your review?" : "Delete this review as a moderator?" } } %>
           </div>
         <% end %>
       </article>

@@ -32,6 +32,15 @@ Rails.application.routes.draw do
       patch :mark_rented
     end
     resources :applications, only: :create
+    resources :reports, only: :create
+  end
+
+  # Moderators review the reports about listings: dismiss them, or uphold them (the room is withdrawn)
+  resources :reports, only: :index do
+    member do
+      patch :dismiss
+      patch :uphold
+    end
   end
 
   # Hosts propose visits on an application
@@ -56,6 +65,15 @@ Rails.application.routes.draw do
   end
 
   resources :reviews, only: %i[edit update destroy]
+
+  # Public JSON API: published listings and the catalogs to filter them, without personal data
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :listings, only: %i[index show]
+      resources :neighborhoods, only: :index
+      resources :amenities, only: :index
+    end
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

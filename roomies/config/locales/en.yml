@@ -29,3 +29,66 @@
 
 en:
   hello: "Hello world"
+
+  # What the 403 page says when a policy refuses an action (ApplicationController#forbidden).
+  # Keys: pundit.<policy>.<query>; anything missing falls back to pundit.default.
+  pundit:
+    default: "Your account doesn't have permission to do that."
+    listing_policy:
+      show?: "This room is a draft: only its host and the moderators can see it until it is published."
+      new?: "Only the host of a property can add rooms to it."
+      create?: "Only the host of a property can add rooms to it."
+      edit?: "Only the host of this room, or a moderator, can edit it."
+      update?: "Only the host of this room, or a moderator, can edit it."
+      destroy?: "Only the host of this room, or a moderator, can delete it."
+      publish?: "Only the host of this room can publish it."
+      withdraw?: "Only the host of this room, or a moderator, can withdraw it."
+      mark_rented?: "Only the host of this room can mark it as rented."
+      see_applications?: "Only the host of this room, or a moderator, can see its applications."
+    property_policy:
+      new?: "Log in to register a property."
+      create?: "Log in to register a property."
+      edit?: "Only the host of this property, or a moderator, can edit it."
+      update?: "Only the host of this property, or a moderator, can edit it."
+      destroy?: "Only the host of this property, or a moderator, can delete it."
+    application_policy:
+      index?: "Log in to see your applications."
+      show?: "This application belongs to someone else: only the seeker who sent it, the host of the room and the moderators can see it."
+      create?: "You can't apply to your own room."
+      withdraw?: "Only the seeker who sent this application can withdraw it."
+      shortlist?: "Only the host of the room can shortlist an application."
+      reject?: "Only the host of the room can reject an application."
+      accept?: "Only the host of the room can accept an application."
+    visit_policy:
+      create?: "Only the host of the room or the seeker who applied can propose a visit."
+      cancel?: "Only the host of the room or the seeker who applied can cancel this visit."
+      confirm?: "Only the seeker who applied can confirm this visit."
+      edit?: "Only the host of the room can reschedule this visit."
+      update?: "Only the host of the room can reschedule this visit."
+      complete?: "Only the host of the room can mark this visit as completed."
+    review_policy:
+      create?: "You can review a property only after one of your own visits to it is completed."
+      edit?: "Only the author of this review can edit it."
+      update?: "Only the author of this review can edit it."
+      destroy?: "Only the author of this review, or a moderator, can delete it."
+    report_policy:
+      create?: "You can't report your own room."
+      index?: "Only moderators can see the reports."
+      dismiss?: "Only moderators can resolve reports."
+      uphold?: "Only moderators can resolve reports."
+    neighborhood_policy:
+      new?: "Only moderators can manage the neighborhoods."
+      create?: "Only moderators can manage the neighborhoods."
+      edit?: "Only moderators can manage the neighborhoods."
+      update?: "Only moderators can manage the neighborhoods."
+      destroy?: "Only moderators can manage the neighborhoods."
+    amenity_policy:
+      index?: "Only moderators can manage the amenity catalog."
+      new?: "Only moderators can manage the amenity catalog."
+      create?: "Only moderators can manage the amenity catalog."
+      edit?: "Only moderators can manage the amenity catalog."
+      update?: "Only moderators can manage the amenity catalog."
+      destroy?: "Only moderators can manage the amenity catalog."
+    user_policy:
+      show?: "You can only see your own profile."
+      update?: "You can only edit your own profile."

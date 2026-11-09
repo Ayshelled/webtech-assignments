@@ -21,6 +21,7 @@ class ProfilesController < ApplicationController
 
   def set_user
     @user = current_user
+    authorize @user # UserPolicy: a member sees and edits only their own account
   end
 
   def profile_params

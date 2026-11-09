@@ -3,8 +3,11 @@ class NeighborhoodsController < ApplicationController
   allow_unauthenticated_access only: %i[index show]
 
   before_action :set_neighborhood, only: %i[show edit update destroy]
+  # Moderators manage the catalog; everyone browses it (NeighborhoodPolicy)
+  before_action -> { authorize @neighborhood }, only: %i[show edit update destroy]
 
   def index
+    authorize Neighborhood
     @neighborhoods = Neighborhood.alphabetical
     # { neighborhood_id => number of published listings }, in a single query
     @published_counts = Listing.published.joins(:property).group("properties.neighborhood_id").count
@@ -21,10 +24,12 @@ class NeighborhoodsController < ApplicationController
 
   def new
     @neighborhood = Neighborhood.new
+    authorize @neighborhood
   end
 
   def create
     @neighborhood = Neighborhood.new(neighborhood_params)
+    authorize @neighborhood
 
     if @neighborhood.save
       redirect_to @neighborhood, notice: "#{@neighborhood.name} was added to the catalog."

@@ -3,11 +3,12 @@
 <section class="page-header">
   <div class="container">
     <p class="section-label mb-2">Applications</p>
-    <h1 class="h2 mb-1"><%= @box == "sent" ? "Applications you sent" : "Your application inbox" %></h1>
-    <p class="text-secondary mb-3">
-      <%= @box == "sent" ? "The rooms you applied to and where each application stands." :
-                           "Applications to your rooms. Shortlist, accept or reject them right here." %>
-    </p>
+    <% titles = { "sent" => "Applications you sent", "received" => "Your application inbox", "all" => "Every application" } %>
+    <% intros = { "sent"     => "The rooms you applied to and where each application stands.",
+                  "received" => "Applications to your rooms. Shortlist, accept or reject them right here.",
+                  "all"      => "As a moderator you can see the applications to every room. Only each room's host answers them." } %>
+    <h1 class="h2 mb-1"><%= titles[@box] %></h1>
+    <p class="text-secondary mb-3"><%= intros[@box] %></p>
 
     <ul class="nav nav-tabs mb-3">
       <li class="nav-item">
@@ -18,30 +19,31 @@
         <%= link_to "Sent", applications_path(box: "sent"), class: class_names("nav-link", active: @box == "sent"),
                                                              aria: { current: ("page" if @box == "sent") } %>
       </li>
+      <% if current_user.moderator? %>
+        <li class="nav-item">
+          <%= link_to "All (moderator)", applications_path(box: "all"), class: class_names("nav-link", active: @box == "all"),
+                                                                        aria: { current: ("page" if @box == "all") } %>
+        </li>
+      <% end %>
     </ul>
 
-    <% if current_user %>
-      <%= render "applications/inbox_summary", box: @box, status: @status, status_counts: @status_counts %>
-    <% end %>
+    <%= render "applications/inbox_summary", box: @box, status: @status, status_counts: @status_counts %>
   </div>
 </section>
 
 <section class="container py-5">
-  <% if current_user.nil? %>
-    <%= render "shared/empty_state", message: "Log in to see your applications.",
-                                     icon: "person-circle" %>
-  <% elsif @applications.any? %>
+  <% if @applications.any? %>
     <div class="table-responsive detail-panel">
       <table class="table table-hover align-middle mb-0">
         <thead>
           <tr>
-            <th scope="col"><%= @box == "received" ? "Seeker" : "Application" %></th>
+            <th scope="col"><%= @box == "sent" ? "Application" : "Seeker" %></th>
             <th scope="col">Room</th>
             <th scope="col">Move-in</th>
             <th scope="col">Stay</th>
             <th scope="col">Status</th>
             <th scope="col">Sent</th>
-            <th scope="col" class="text-end"><%= @box == "received" ? "Your answer" : "" %></th>
+            <th scope="col" class="text-end"><%= { "received" => "Your answer", "all" => "Status" }[@box] %></th>
           </tr>
         </thead>
         <tbody>

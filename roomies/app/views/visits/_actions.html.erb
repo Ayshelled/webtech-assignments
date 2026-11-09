@@ -1,15 +1,17 @@
-<%# The buttons of a visit change with its state and with who you are. Locals: visit, host, seeker %>
+<%# The buttons of a visit change with its state and with who you are (VisitPolicy).
+    VisitsController asks the policy again. Locals: visit, host, seeker (kept for the callers) %>
+<% visit_policy = policy(visit) %>
 <% buttons = [] %>
-<% if seeker && visit.proposed? %>
+<% if visit_policy.confirm? && visit.proposed? %>
   <% buttons << button_to("Confirm", confirm_visit_path(visit), method: :patch, class: "btn btn-sm btn-coral") %>
 <% end %>
-<% if host && (visit.proposed? || visit.confirmed?) %>
+<% if visit_policy.update? && (visit.proposed? || visit.confirmed?) %>
   <% buttons << link_to("Reschedule", edit_visit_path(visit), class: "btn btn-sm btn-outline-secondary") %>
 <% end %>
-<% if host && visit.confirmed? %>
+<% if visit_policy.complete? && visit.confirmed? %>
   <% buttons << button_to("Mark as completed", complete_visit_path(visit), method: :patch, class: "btn btn-sm btn-outline-success") %>
 <% end %>
-<% if (host || seeker) && (visit.proposed? || visit.confirmed?) %>
+<% if visit_policy.cancel? && (visit.proposed? || visit.confirmed?) %>
   <% buttons << button_to("Cancel visit", cancel_visit_path(visit), method: :patch, class: "btn btn-sm btn-outline-danger",
                           form: { data: { turbo_confirm: "Cancel this visit?" } }) %>
 <% end %>

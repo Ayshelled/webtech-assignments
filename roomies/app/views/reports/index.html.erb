@@ -1,0 +1,74 @@
+<% content_for :title, "Reports" %>
+
+<section class="page-header">
+  <div class="container">
+    <p class="section-label mb-2">Moderation</p>
+    <h1 class="h2 mb-1">Reports about listings</h1>
+    <p class="text-secondary mb-3">
+      Dismiss a report when the room is fine, or uphold it to withdraw the room from the search.
+    </p>
+    <nav aria-label="Filter by status">
+      <ul class="nav nav-pills gap-1 flex-wrap">
+        <% Report.statuses.each_key do |each_status| %>
+          <li class="nav-item">
+            <%= link_to reports_path(status: each_status), class: class_names("nav-link", active: @status == each_status),
+                                                           aria: { current: ("page" if @status == each_status) } do %>
+              <%= each_status == "actioned" ? "Upheld" : each_status.humanize %>
+              <span class="badge text-bg-light ms-1"><%= @status_counts.fetch(each_status, 0) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="container py-5">
+  <% if @reports.any? %>
+    <div class="table-responsive detail-panel">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Room</th>
+            <th scope="col">Reason</th>
+            <th scope="col">Reported by</th>
+            <th scope="col">Sent</th>
+            <th scope="col" class="text-end"><%= @status == "pending" ? "Decision" : "Status" %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reports.each do |report| %>
+            <tr>
+              <td>
+                <%= link_to report.listing.title, listing_path(report.listing), class: "fw-semibold" %>
+                <div class="small text-secondary">
+                  <%= report.listing.property.neighborhood.name %> &middot; host <%= report.listing.property.user.full_name %>
+                  &middot; <%= report.listing.status %>
+                </div>
+              </td>
+              <td>
+                <%= report.reason.humanize %>
+                <% if report.details.present? %><div class="small text-secondary"><%= report.details %></div><% end %>
+              </td>
+              <td><%= report.user.full_name %></td>
+              <td class="text-nowrap small text-secondary"><%= short_date(report.created_at.to_date) %></td>
+              <td class="text-end">
+                <% if report.pending? && policy(report).resolve? %>
+                  <div class="d-flex gap-1 justify-content-end">
+                    <%= button_to "Dismiss", dismiss_report_path(report), method: :patch, class: "btn btn-sm btn-outline-secondary" %>
+                    <%= button_to "Uphold", uphold_report_path(report), method: :patch, class: "btn btn-sm btn-danger",
+                                  form: { data: { turbo_confirm: "Uphold this report? #{report.listing.title} will be withdrawn." } } %>
+                  </div>
+                <% else %>
+                  <%= status_badge(report.status) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "No reports in this state.", icon: "flag" %>
+  <% end %>
+</section>

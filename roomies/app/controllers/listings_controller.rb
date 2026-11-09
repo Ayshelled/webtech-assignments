@@ -6,17 +6,20 @@ class ListingsController < ApplicationController
 
   before_action :set_property, only: %i[new create]
   before_action :set_listing, only: %i[edit update destroy publish withdraw mark_rented]
-  before_action :require_host, only: %i[new create edit update destroy publish withdraw mark_rented]
+  # Every action asks ListingPolicy: the host manages the room, a moderator can edit,
+  # withdraw or delete any of them, and a draft is seen only by them
+  before_action :authorize_listing, only: %i[edit update destroy publish withdraw mark_rented]
   RENT_OPTIONS = [ 300_000, 400_000, 500_000, 600_000 ].freeze
 
   # Only published listings are open for applications, so they are the only ones listed.
   # The search form filters them with the model's named scopes.
   def index
+    authorize Listing
     @neighborhoods = Neighborhood.alphabetical
     @amenities     = Amenity.alphabetical
     @filters       = search_filters
 
-    @listings = Listing.published.includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood).newest_first
+    @listings = policy_scope(Listing).published.includes({ listing_photos: ListingPhoto::WITH_IMAGE }, property: :neighborhood).newest_first
     @listings = @listings.in_neighborhood(@filters[:neighborhood_id]) if @filters[:neighborhood_id]
     @listings = @listings.under_rent(@filters[:max_rent])             if @filters[:max_rent]
     @listings = @listings.available_by(@filters[:available_by])       if @filters[:available_by]
@@ -24,21 +27,21 @@ class ListingsController < ApplicationController
     @listings.load # one query; size/any? in the view reuse the loaded records
   end
 
-  # A draft is visible only to its host
+  # A draft is visible only to its host and to moderators
   def show
     prepare_listing_page(params.expect(:id))
-    return if @listing.visible_to?(current_user)
-
-    redirect_to listings_path, alert: "That room isn't published yet."
+    authorize @listing
   end
 
   # A listing is always created inside a property, and starts as a draft
   def new
     @listing = @property.listings.new
+    authorize @listing
   end
 
   def create
     @listing = @property.listings.new(listing_params)
+    authorize @listing
 
     if @listing.save
       redirect_to @listing, notice: "Your room was saved as a draft."
@@ -87,13 +90,9 @@ class ListingsController < ApplicationController
                           status: :see_other
   end
 
-  # Only the host of the property manages its listings
-  def require_host
-    return if current_user && current_user == @property.user
-
-    redirect_to(@listing || property_path(@property),
-                alert: "Only the host, #{@property.user.full_name}, can manage this property's listings. " \
-                       "Choose them in the navigation bar.")
+  # publish -> publish?, mark_rented -> mark_rented?, and so on
+  def authorize_listing
+    authorize @listing
   end
 
   def set_property

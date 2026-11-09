@@ -129,11 +129,48 @@ Every seeded user has the password **`password123`**.
 | --- | --- | --- |
 | Moderator | `ignacio.fuentes@example.com` | Reports, neighborhoods and amenities |
 | Member (host) | `camila.rojas@example.com` | Owns two properties and receives most applications |
-| Member (host) | `matias.gonzalez@example.com` | Another host, to check that hosts can't touch each other's listings |
+| Member (host) | `matias.gonzalez@example.com` | Another host, with his own draft: Camila can't see it, nor he Camila's |
 | Member (seeker) | `benjamin.morales@example.com` | Pending and shortlisted applications, and a review he wrote after a completed visit |
 | Member (seeker) | `catalina.silva@example.com` | Another seeker, with a shortlisted application |
 
 The other seeded users (listed at the top of `db/seeds.rb`) use the same password.
+
+### Authorization (Pundit)
+
+Every model has a Pundit policy in `app/policies`. The base class is `BasePolicy` and not
+Pundit's usual `ApplicationPolicy`, because in Roomies that name belongs to the policy of the
+`Application` model (a seeker's application to a room). A **visitor** is not a role: it is a
+request with no signed-in user, and every policy answers for `user == nil`.
+
+| Action | Visitor | Member | Moderator |
+| --- | --- | --- | --- |
+| Browse and search published listings | Yes | Yes | Yes |
+| See a draft listing | No | Only their own | Yes |
+| Create a property or a listing | No | Yes (rooms only in their own property) | Yes |
+| Edit or delete a property or listing | No | Only their own | Any |
+| Apply to a listing | No | Yes, except on their own | Same as a member |
+| See the applications on a listing | No | On their own listings, plus the ones they wrote | Yes (the *All* tab of the inbox) |
+| Shortlist, reject or accept an application | No | Only on their own listings | No |
+| Propose or cancel a visit | No | Host of the listing, or the applicant | No |
+| Write a review | No | Only after their own completed visit | No |
+| Delete a review | No | Only their own | Any |
+| Report a listing | No | Yes (not their own) | Yes |
+| Resolve a report | No | No | Yes (`/reports`) |
+| Manage neighborhoods and amenities | No | No | Yes |
+
+- **Scopes:** the host's inbox and the seeker's list of sent applications are built from
+  `ApplicationPolicy::Scope`, so the query only returns what the user may see. Drafts are hidden
+  by `ListingPolicy::Scope` on the search and the property pages.
+- **Enforced in the controller:** hiding a button is only a courtesy. Every action calls
+  `authorize`, and `after_action :verify_authorized` fails if one forgets to. Typing the id of
+  someone else's application, or sending a `PATCH` by hand, is refused.
+- **The 403 page:** an unauthorized attempt renders `app/views/errors/forbidden.html.erb` with
+  status 403 and an explanation of the rule that blocked it (`config/locales/en.yml`, keys
+  `pundit.<policy>.<action>`), never a raw error.
+
+To check the table, sign in as Benjamín and open `/applications/<id>` of an application by
+Catalina; sign in as Matías and try to edit one of Camila's rooms; sign in as Ignacio (moderator)
+and open the *Reports* page or the *All* tab of the applications.
 
 ### Notification emails (Active Job)
 
@@ -156,6 +193,79 @@ listed at <http://localhost:3000/letter_opener>. To try the password reset, choo
 password?* on the log in page, then open the email there and follow its link. To see a
 notification, apply to a room as a seeker, or answer an application as its host. Emails are sent in
 the background with Active Job (`deliver_later`).
+
+## Public JSON API (v1)
+
+A read-only API for the published listings, under `/api/v1`. It needs no account and exposes no
+personal data: no host or seeker names, emails or phones, no applications, and not the street
+address of the property (the host may live there), only its neighborhood. Responses are JSON
+with a `data` key; lists also have `meta` (pagination and applied filters) and `links`.
+
+| Method and path | Description |
+| --- | --- |
+| `GET /api/v1/listings` | Published listings, filtered and paginated |
+| `GET /api/v1/listings/:id` | One published listing, with its full description and photos |
+| `GET /api/v1/neighborhoods` | The neighborhoods, with how many published listings each one has |
+| `GET /api/v1/amenities` | The amenities and shared spaces (to filter by `amenity_id`) |
+
+Query parameters of `GET /api/v1/listings` (all optional and combinable):
+
+| Parameter | Example | Meaning |
+| --- | --- | --- |
+| `neighborhood_id` | `3` | Only rooms in that neighborhood |
+| `amenity_id` | `5` | Only rooms whose property has that amenity |
+| `max_rent` | `400000` | Monthly rent up to this amount (CLP) |
+| `available_by` | `2026-12-01` | Rooms you can move into by that date (`YYYY-MM-DD`) |
+| `sort` | `rent_asc` | `newest` (default), `rent_asc` or `rent_desc` |
+| `page`, `per_page` | `2`, `12` | Pagination: pages start at 1; `per_page` from 1 to 50 (default 12) |
+
+Status codes:
+
+| Status | When |
+| --- | --- |
+| `200 OK` | The listings (possibly an empty `data` array) or the listing |
+| `400 Bad Request` | A malformed parameter; `error.details` names each one and what is wrong |
+| `404 Not Found` | The listing doesn't exist or isn't published (drafts are never exposed) |
+
+```bash
+curl "http://localhost:3000/api/v1/listings?max_rent=400000&sort=rent_asc&per_page=2"
+```
+
+```json
+{
+  "data": [
+    {
+      "id": 12, "title": "Room with city views in San Miguel", "status": "published",
+      "monthly_rent": 300000, "deposit": 300000, "currency": "CLP",
+      "available_from": "2026-11-27", "minimum_stay_months": 6,
+      "furnished": true, "private_bathroom": false,
+      "summary": "Room on the 15th floor with views of the city...",
+      "cover_photo": { "url": "https://images.unsplash.com/...", "alt": "Bedroom with wooden furniture" },
+      "neighborhood": { "id": 7, "name": "San Miguel", "city": "Santiago" },
+      "property": { "type": "apartment", "bedrooms": 2, "bathrooms": 1, "amenities": ["Gym", "Wi-Fi"] },
+      "links": { "self": "http://localhost:3000/api/v1/listings/12", "html": "http://localhost:3000/listings/12" }
+    }
+  ],
+  "meta": { "total_count": 6, "page": 1, "per_page": 2, "total_pages": 3,
+            "filters": { "max_rent": 400000, "sort": "rent_asc" } },
+  "links": { "self": "...?page=1", "first": "...?page=1", "prev": null, "next": "...?page=2", "last": "...?page=3" }
+}
+```
+
+An error:
+
+```json
+{ "error": { "status": 400, "message": "Invalid query parameters",
+             "details": { "max_rent": "must be a whole number greater than or equal to 1" } } }
+```
+
+### The search page uses the API
+
+`/listings` is rendered by the server the first time (so it works without JavaScript and keeps
+the Assignment 3 search). Then the Stimulus controller `listing_search_controller.js` takes over:
+changing a filter or submitting the form calls `GET /api/v1/listings` with `fetch`, draws the
+cards from the JSON, shows a *Show more rooms* button while there are more pages, reports a 400
+in an alert, and keeps the address bar in sync with the filters.
 
 ## Tests
 

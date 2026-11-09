@@ -3,10 +3,11 @@ class VisitsController < ApplicationController
 
   before_action :set_visit, except: :create
 
-  # The host proposes a visit from the application page
+  # The host of the room or the applicant proposes a visit from the application page
   def create
     @application = Application.find(params.expect(:application_id))
     @visit = @application.visits.new(visit_params)
+    authorize @visit
 
     if @visit.save
       redirect_to application_path(@application), notice: "Visit proposed. The seeker can now confirm it."
@@ -49,8 +50,10 @@ class VisitsController < ApplicationController
 
   private
 
+  # confirm -> confirm?, cancel -> cancel?, complete -> complete?, edit/update -> update? (VisitPolicy)
   def set_visit
     @visit = Visit.find(params.expect(:id))
+    authorize @visit
   end
 
   def change_status(status, message)

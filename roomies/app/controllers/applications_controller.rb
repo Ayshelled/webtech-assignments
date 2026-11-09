@@ -5,11 +5,13 @@ class ApplicationsController < ApplicationController
   before_action :set_received_application, only: %i[shortlist reject accept]
 
   # The signed-in user's inbox: the applications received for their rooms (as host), or
-  # the ones they sent (as seeker), filtered by status
+  # the ones they sent (as seeker), filtered by status. Moderators also get an "all" box.
+  # Every box is built from ApplicationPolicy::Scope, so the query itself only returns
+  # the applications the user may see.
   def index
-    @box = params[:box] == "sent" ? "sent" : "received"
+    authorize Application
+    @box = params[:box].presence_in(inbox_boxes) || "received"
     @status = params[:status].presence_in(Application.statuses.keys)
-    return unless current_user
 
     applications = inbox_scope
     @status_counts = applications.group(:status).count
@@ -18,8 +20,11 @@ class ApplicationsController < ApplicationController
     @applications.load
   end
 
+  # Only the seeker who sent it, the host of the room and moderators: anyone else
+  # typing its id in the URL gets the 403 page
   def show
     prepare_application_page(params.expect(:id))
+    authorize @application
   end
 
   # A seeker applies from the listing page, inside its "application_box" Turbo Frame:
@@ -29,6 +34,7 @@ class ApplicationsController < ApplicationController
     @listing = Listing.find(params.expect(:listing_id))
     @application = @listing.applications.new(application_params)
     @application.user = current_user
+    authorize @application
 
     if @application.save
       # Email the host in the background (Active Job)
@@ -51,7 +57,8 @@ class ApplicationsController < ApplicationController
 
   # Only its author can withdraw an application
   def withdraw
-    @application = current_user.applications.find(params.expect(:id))
+    @application = Application.find(params.expect(:id))
+    authorize @application
 
     if @application.update(status: :withdrawn)
       redirect_back fallback_location: application_path(@application), notice: "Your application was withdrawn."
@@ -79,13 +86,25 @@ class ApplicationsController < ApplicationController
 
   private
 
-  def inbox_scope
-    @box == "sent" ? current_user.applications : Application.received_by(current_user)
+  def inbox_boxes
+    current_user.moderator? ? %w[received sent all] : %w[received sent]
   end
 
-  # Only the host of the room can answer: anyone else gets a 404
+  # received: the host's inbox; sent: the seeker's applications; all: what the policy
+  # scope allows (every application, for a moderator)
+  def inbox_scope
+    applications = policy_scope(Application)
+    case @box
+    when "sent"     then applications.where(user_id: current_user.id)
+    when "received" then applications.received_by(current_user)
+    else applications
+    end
+  end
+
+  # Only the host of the room can answer (ApplicationPolicy#shortlist?, #reject?, #accept?)
   def set_received_application
-    @application = Application.received_by(current_user).includes(:user, :listing).find(params.expect(:id))
+    @application = Application.includes(:user, :listing).find(params.expect(:id))
+    authorize @application
   end
 
   def answer(decision, notice)
@@ -107,7 +126,7 @@ class ApplicationsController < ApplicationController
       message.each { |type, text| flash.now[type] = text }
       @box = "received"
       @status = params[:status].presence_in(Application.statuses.keys)
-      @status_counts = Application.received_by(current_user).group(:status).count
+      @status_counts = policy_scope(Application).received_by(current_user).group(:status).count
       render :answer, formats: :turbo_stream
     else
       target = params[:inbox].present? ? applications_path(status: params[:status]) : application_path(@application)

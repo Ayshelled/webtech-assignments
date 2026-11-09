@@ -10,6 +10,8 @@ class ReviewsController < ApplicationController
     # Only a visit of the signed-in user to this property can be reviewed: anything else
     # leaves the review without a visit, and its validations reject it
     @review.visit = reviewable_visits(@property).find_by(id: review_params[:visit_id])
+    # Only after one of their own completed visits (ReviewPolicy#create?)
+    authorize @review
 
     if @review.save
       redirect_to property_path(@property), notice: "Thanks! Your review was published."
@@ -32,16 +34,16 @@ class ReviewsController < ApplicationController
 
   def destroy
     @review.destroy
-    redirect_to property_path(@property), notice: "Your review was deleted.", status: :see_other
+    notice = @review.visit.application.user_id == current_user.id ? "Your review was deleted." : "The review was deleted."
+    redirect_to property_path(@property), notice: notice, status: :see_other
   end
 
   private
 
-  # Only the author of a review can change it
+  # Only the author changes a review; the author or a moderator deletes it (ReviewPolicy)
   def set_review
-    @review = Review.joins(visit: :application)
-                    .where(applications: { user_id: current_user.id })
-                    .find(params.expect(:id))
+    @review = Review.find(params.expect(:id))
+    authorize @review
     @property = @review.visit.application.listing.property
   end
 

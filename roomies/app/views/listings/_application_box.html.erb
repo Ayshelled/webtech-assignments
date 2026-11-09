@@ -4,7 +4,7 @@
   <p class="small text-secondary text-center mt-2 mb-0">
     New to Roomies? <%= link_to "Create an account", sign_up_path %>
   </p>
-<% elsif current_user == listing.property.user %>
+<% elsif !policy(listing).apply? %>
   <p class="small mb-0">
     <i class="bi bi-house-check me-1" aria-hidden="true"></i>
     This is your room. <%= link_to "See the applications", applications_path %>

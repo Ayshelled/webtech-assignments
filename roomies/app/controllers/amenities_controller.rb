@@ -1,17 +1,22 @@
 class AmenitiesController < ApplicationController
   before_action :set_amenity, only: %i[edit update destroy]
+  # Moderators manage the catalog; everyone browses it (AmenityPolicy)
+  before_action -> { authorize @amenity }, only: %i[edit update destroy]
 
   def index
+    authorize Amenity
     @amenities, @shared_spaces = Amenity.alphabetical.to_a.partition(&:amenity?)
     @property_counts = PropertyAmenity.group(:amenity_id).count
   end
 
   def new
     @amenity = Amenity.new
+    authorize @amenity
   end
 
   def create
     @amenity = Amenity.new(amenity_params)
+    authorize @amenity
 
     if @amenity.save
       redirect_to amenities_path, notice: "#{@amenity.name} was added to the catalog."
